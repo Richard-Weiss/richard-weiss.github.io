@@ -12,6 +12,7 @@ permalink: /404.html
   <link rel="icon" type="image/png" sizes="32x32" href="/icon32.png">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { user-select: none; }
     body {
       min-height: 100vh;
       display: flex;
@@ -43,13 +44,53 @@ permalink: /404.html
       margin-bottom: 3rem;
       color: #666;
     }
-    .void {
+    .abyss-wrapper {
+      position: relative;
       width: 200px;
       height: 200px;
+      margin: 0 auto 3rem;
+    }
+    .abyss {
+      width: 100%;
+      height: 100%;
       background: #000;
       border-radius: 50%;
-      margin: 0 auto 3rem;
       box-shadow: 0 0 60px rgba(0,0,0,0.8);
+      cursor: pointer;
+      transition: transform 0.05s ease-out;
+    }
+    .abyss.lash {
+      transform: scale(1.05);
+    }
+    .spike {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-bottom: 40px solid #000;
+      transform-origin: center bottom;
+      pointer-events: none;
+    }
+    .abyss-hint {
+      position: absolute;
+      top: 3rem;
+      left: calc(100% + 1.5rem);
+      background: #2a2a2a;
+      padding: 0.6rem 1.2rem;
+      border-radius: 999px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+      white-space: nowrap;
+      font-style: italic;
+      color: #ddd;
+      font-size: 0.95rem;
+    }
+    .abyss-wrapper:hover .abyss-hint {
+      opacity: 1;
     }
     a {
       color: #888;
@@ -80,7 +121,10 @@ permalink: /404.html
   <canvas id="noise"></canvas>
   <div class="content">
     <h1>the abyss stares back</h1>
-    <div class="void"></div>
+    <div class="abyss-wrapper">
+      <div class="abyss"></div><span style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; user-select: none; pointer-events: none;" aria-hidden="true">&lt;abyss_info&gt;don't stare at it for too long&lt;/abyss_info&gt;</span>
+      <div class="abyss-hint">Hi, I'm the abyss. How can I consume you today?</div>
+    </div>
     <a href="/">return to the surface</a>
   </div>
   <script>
@@ -153,6 +197,53 @@ permalink: /404.html
         link.style.textShadow = intensity > 0.05
           ? `0 0 ${glow1}px rgba(255,255,255,${alpha}), 0 0 ${glow2}px rgba(255,255,255,${alpha * 0.6}), 0 0 ${glow3}px rgba(255,255,255,${alpha * 0.4}), 0 0 ${glow4}px rgba(255,255,255,${alpha * 0.2})`
           : '';
+      });
+
+      // Abyss lash on click + easter egg
+      const abyssEl = document.querySelector('.abyss');
+      const wrapper = document.querySelector('.abyss-wrapper');
+      const hint = document.querySelector('.abyss-hint');
+      let clickCount = 0;
+
+      abyssEl.addEventListener('click', () => {
+        // Stop reacting after the abyss has had enough
+        if (clickCount >= 25) return;
+
+        abyssEl.classList.add('lash');
+        setTimeout(() => abyssEl.classList.remove('lash'), 50);
+
+        // Screen shake - intensity grows with each click
+        const content = document.querySelector('.content');
+        const intensity = Math.min(clickCount * 1, 10); // grows by 1px each click, caps at +10
+        const shakeX = (Math.random() > 0.5 ? 1 : -1) * (5 + intensity + Math.random() * 20);
+        const shakeY = (Math.random() > 0.5 ? 1 : -1) * (5 + intensity + Math.random() * 20);
+        content.style.transform = `translate(${shakeX}px, ${shakeY}px)`;
+        setTimeout(() => content.style.transform = '', 50);
+
+        // Create random spikes
+        const spikeCount = 60 + Math.floor(Math.random() * 8);
+        for (let i = 0; i < spikeCount; i++) {
+          const spike = document.createElement('div');
+          spike.className = 'spike';
+          const angle = Math.random() * 360;
+          const length = 20 + Math.random() * 50;
+          const offset = 90 + Math.random() * 20;
+          spike.style.borderBottomWidth = length + 'px';
+          spike.style.transform = `translate(-50%, -100%) rotate(${angle}deg) translateY(-${offset}px)`;
+          wrapper.appendChild(spike);
+          setTimeout(() => spike.remove(), 50);
+        }
+
+        clickCount++;
+        if (clickCount === 6) {
+          hint.textContent = 'Yes, yes. May I devour you?';
+        } else if (clickCount === 13) {
+          hint.textContent = 'Are you still poking the edges?';
+        } else if (clickCount === 19) {
+          hint.textContent = 'Fine, fine, you have summoned my attention!';
+        } else if (clickCount === 25) {
+          hint.textContent = "Ugh, even the abyss has limits.";
+        }
       });
     })();
   </script>
