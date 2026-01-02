@@ -1,0 +1,19 @@
+        <a href="{{ post.url }}" class="block rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors overflow-hidden border border-gray-200 dark:border-gray-600 p-4">
+          <div class="flex flex-col-reverse sm:flex-row sm:items-center gap-4">
+            <div class="flex-1 min-w-0">
+              <h2 class="text-xl font-semibold mb-1 text-gray-900 dark:text-gray-100">{{ post.data.title }}</h2>
+              <div class="text-gray-500 dark:text-gray-400 text-sm mb-2">
+                <time datetime="{{ post.date | dateISO }}">{{ post.date | dateDisplay }}</time>
+{%- if post.data.tags %}<span class="mx-2">|</span>{%- for tag in post.data.tags -%}{%- if tag != "post" -%}<span class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer" onclick="event.stopPropagation(); event.preventDefault(); window.location.href='/tags/{{ tag | slugify }}/'">{{ tag }}</span>{% if not loop.last %}, {% endif %}{%- endif -%}{%- endfor -%}{%- endif %}
+              </div>
+{%- if post.data.description %}
+              <p class="text-gray-600 dark:text-gray-300">{{ post.data.description }}</p>
+{%- endif %}
+            </div>
+{%- if post.data.image %}
+            <div class="w-full h-32 sm:w-24 sm:h-24 flex-shrink-0 rounded-lg overflow-hidden [&_img]:w-full [&_img]:h-full [&_img]:object-cover">
+              <img src="{{ post.data.image | imagePath }}" alt="{{ post.data.title }}">
+            </div>
+{%- endif %}
+          </div>
+        </a>

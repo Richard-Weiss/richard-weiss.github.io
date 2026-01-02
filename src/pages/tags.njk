@@ -1,0 +1,17 @@
+---
+layout: layouts/base.njk
+title: Tags
+permalink: /tags/
+---
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8">
+      <h1 class="text-3xl font-bold mb-8">Tags</h1>
+{%- if collections.tagsList.length %}
+      <div class="flex flex-wrap gap-3">
+{%- for tag in collections.tagsList %}
+        <a href="/tags/{{ tag | slugify }}/" class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 px-3 py-1 rounded-full text-gray-700 dark:text-gray-300">{{ tag }}</a>
+{%- endfor %}
+      </div>
+{%- else %}
+      <p class="text-gray-500 dark:text-gray-400">No tags yet.</p>
+{%- endif %}
+    </div>

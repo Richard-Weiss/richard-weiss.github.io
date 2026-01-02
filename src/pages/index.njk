@@ -1,0 +1,16 @@
+---
+layout: layouts/base.njk
+permalink: /
+---
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8">
+      <h1 class="text-3xl font-bold mb-8">Recent Posts</h1>
+{%- if collections.posts.length %}
+      <div class="space-y-4">
+{%- for post in collections.posts %}
+{% include "partials/post-card.njk" %}
+{%- endfor %}
+      </div>
+{%- else %}
+      <p class="text-gray-500 dark:text-gray-400">No posts yet. Check back soon!</p>
+{%- endif %}
+    </div>

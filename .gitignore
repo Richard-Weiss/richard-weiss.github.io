@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Local dev setup
+dev-control.js
+Dockerfile
+docker-compose.yml
+
+# Build cache
+.cache/
+
+# Editor
+.vscode/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+
+# Personal notes
+src/posts/_syntax.txt

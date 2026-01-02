@@ -1,0 +1,28 @@
+---
+pagination:
+  data: collections
+  size: 1
+  alias: tag
+  filter:
+    - all
+    - posts
+    - tagsList
+permalink: /tags/{{ tag | slugify }}/
+layout: layouts/base.njk
+---
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8">
+      <h1 class="text-3xl font-bold mb-8">Posts tagged "{{ tag }}"</h1>
+{%- set taggedPosts = collections[tag] -%}
+{%- if taggedPosts.length %}
+      <div class="space-y-4">
+{%- for post in taggedPosts | reverse %}
+{% include "partials/post-card.njk" %}
+{%- endfor %}
+      </div>
+{%- else %}
+      <p class="text-gray-500 dark:text-gray-400">No posts with this tag yet.</p>
+{%- endif %}
+      <p class="mt-8">
+        <a href="/tags/" class="text-blue-600 dark:text-blue-400 hover:underline">&larr; All tags</a>
+      </p>
+    </div>

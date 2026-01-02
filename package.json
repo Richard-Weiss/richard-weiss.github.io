@@ -1,0 +1,39 @@
+{
+  "name": "personal_blog",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "css:build": "postcss src/assets/css/main.css -o docs/assets/css/main.css",
+    "css:watch": "postcss src/assets/css/main.css -o docs/assets/css/main.css --watch",
+    "eleventy:build": "eleventy",
+    "eleventy:serve": "eleventy --serve --port=4004",
+    "build": "npm run css:build && npm run eleventy:build",
+    "build:prod": "NODE_ENV=production ELEVENTY_ENV=production npm run css:build && ELEVENTY_ENV=production npm run eleventy:build",
+    "dev": "npm run css:build && npm run eleventy:serve",
+    "control": "node dev-control.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Richard-Weiss/richard-weiss.github.io.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Richard-Weiss/richard-weiss.github.io/issues"
+  },
+  "homepage": "https://github.com/Richard-Weiss/richard-weiss.github.io#readme",
+  "devDependencies": {
+    "@11ty/eleventy": "^3.1.2",
+    "@11ty/eleventy-img": "^5.0.0",
+    "@11ty/eleventy-plugin-syntaxhighlight": "^5.0.2",
+    "@tailwindcss/typography": "^0.5.19",
+    "autoprefixer": "^10.4.22",
+    "cssnano": "^7.0.0",
+    "postcss": "^8.5.6",
+    "postcss-cli": "^11.0.1",
+    "tailwindcss": "^3.4.19"
+  }
+}
