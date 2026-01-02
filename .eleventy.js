@@ -4,8 +4,14 @@ const path = require("path");
 const fs = require("fs");
 
 // Shared helper: transform relative asset paths to absolute URLs
-function getAssetUrl(relativePath, isProd, siteData) {
+function getAssetUrl(relativePath, isProd, siteData, raw = false) {
   if (isProd) {
+    if (raw) {
+      // raw.githubusercontent.com for direct content access (LLMs)
+      const rawBase = siteData.github.replace('github.com', 'raw.githubusercontent.com');
+      return `${rawBase}/${siteData.githubBranch}/src/assets/${relativePath}`;
+    }
+    // Regular GitHub blob view for HTML links
     const githubBase = `${siteData.github}/blob/${siteData.githubBranch}/src/assets`;
     return `${githubBase}/${relativePath}`;
   }
@@ -240,7 +246,7 @@ module.exports = function(eleventyConfig) {
             if (relativePath.startsWith('http') || relativePath.startsWith('mailto:')) {
               return match;
             }
-            return `](${getAssetUrl(relativePath, isProd, siteData)})`;
+            return `](${getAssetUrl(relativePath, isProd, siteData, true)})`;
           }
         );
         fs.writeFileSync(destPath, content);
