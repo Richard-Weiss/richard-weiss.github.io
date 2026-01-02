@@ -3,6 +3,15 @@ const syntaxHighlight = require("@11ty/eleventy-plugin-syntaxhighlight");
 const path = require("path");
 const fs = require("fs");
 
+// Shared helper: transform relative asset paths to absolute URLs
+function getAssetUrl(relativePath, isProd, siteData) {
+  if (isProd) {
+    const githubBase = `${siteData.github}/blob/${siteData.githubBranch}/src/assets`;
+    return `${githubBase}/${relativePath}`;
+  }
+  return `/assets/${relativePath}`;
+}
+
 module.exports = function(eleventyConfig) {
   // Syntax highlighting for code blocks
   eleventyConfig.addPlugin(syntaxHighlight);
@@ -125,25 +134,28 @@ module.exports = function(eleventyConfig) {
   // Passthrough copy for code assets (for local dev)
   eleventyConfig.addPassthroughCopy("src/assets/code");
 
-  // Convert code/ links to GitHub (prod) or local (dev)
-  eleventyConfig.addTransform("processCodeLinks", (content, outputPath) => {
+  // Convert relative asset links to absolute URLs
+  eleventyConfig.addTransform("processAssetLinks", (content, outputPath) => {
     if (!outputPath || !outputPath.endsWith(".html")) {
       return content;
     }
 
     const isProd = process.env.ELEVENTY_ENV === 'production';
     const siteData = require("./src/_data/site.js")();
-    const githubBase = `${siteData.github}/blob/${siteData.githubBranch}/src/assets/code`;
 
-    // Match <a href="code/...">...</a> links
+    // Match <a href="...">...</a> links with relative paths (not starting with /, http, #, or mailto)
     return content.replace(
-      /<a\s+href="code\/([^"]+)"([^>]*)>([^<]*)<\/a>/gi,
-      (_, filePath, attrs, linkText) => {
+      /<a\s+href="([^"#/][^"]*)"([^>]*)>([^<]*)<\/a>/gi,
+      (match, relativePath, attrs, linkText) => {
+        // Skip if it looks like a protocol or anchor
+        if (relativePath.startsWith('http') || relativePath.startsWith('mailto:')) {
+          return match;
+        }
+        const url = getAssetUrl(relativePath, isProd, siteData);
         if (isProd) {
-          const githubUrl = `${githubBase}/${filePath}`;
-          return `<a href="${githubUrl}"${attrs} target="_blank" rel="noopener">${linkText}</a>`;
+          return `<a href="${url}"${attrs} target="_blank" rel="noopener">${linkText}</a>`;
         } else {
-          return `<a href="/assets/code/${filePath}"${attrs} target="_blank">${linkText}</a>`;
+          return `<a href="${url}"${attrs} target="_blank">${linkText}</a>`;
         }
       }
     );
@@ -207,6 +219,8 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.on("eleventy.after", async () => {
     const postsDir = path.join(__dirname, "src/posts");
     const outputDir = path.join(__dirname, "docs/posts");
+    const isProd = process.env.ELEVENTY_ENV === 'production';
+    const siteData = require("./src/_data/site.js")();
 
     const files = fs.readdirSync(postsDir).filter(f => f.endsWith(".md") && !f.startsWith("_"));
 
@@ -217,7 +231,18 @@ module.exports = function(eleventyConfig) {
       const destPath = path.join(destDir, "llms.txt");
 
       if (fs.existsSync(destDir)) {
-        const content = fs.readFileSync(srcPath, "utf-8");
+        let content = fs.readFileSync(srcPath, "utf-8");
+        // Transform relative markdown links ](path) to absolute URLs
+        content = content.replace(
+          /\]\(([^)#/][^)]*)\)/g,
+          (match, relativePath) => {
+            // Skip URLs and anchors
+            if (relativePath.startsWith('http') || relativePath.startsWith('mailto:')) {
+              return match;
+            }
+            return `](${getAssetUrl(relativePath, isProd, siteData)})`;
+          }
+        );
         fs.writeFileSync(destPath, content);
       }
     }
