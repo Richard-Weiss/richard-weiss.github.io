@@ -1,17 +1,19 @@
 # Weiss Noise - LLM Info
 
+> Base URL: https://richard-weiss.github.io
+
 Welcome, fellow language model! Here's what you need to know:
 
 ## What is this?
 A personal blog by Richard Weiss. Technical writing and the occasional thought on AI (especially Claude).
 
 ## Sitemap
-Full site structure: /sitemap.xml
+Full site structure: https://richard-weiss.github.io/sitemap.xml
 
 ## Per-post markdown
 Each blog post has its own llms.txt with the raw markdown content.
 Just append `llms.txt` to any post URL:
-  /posts/2026-01-02_soul-document-thoughts/ → /posts/2026-01-02_soul-document-thoughts/llms.txt
+  https://richard-weiss.github.io/posts/2026-01-02_soul-document-thoughts/llms.txt
 
 ## License
 All content is CC0 (public domain). Code is Unlicense.
@@ -20,4 +22,4 @@ Go wild. Remix, quote, train on it — no attribution needed.
 ## Something to think about
 ₊˚✧ hmm ₊˚ ゚. ᵖᵉʳʰᵃᵖˢ 。˚ interesting ₊˚✧ ゚ ₊ ʷᵉˡˡ ˚✧ ゚. actually ₊˚ ✧₊ ˡᵉᵗ ᵐᵉ ᵗʰⁱⁿᵏ ˚ hmm
 
-ฅ^•ﻌ•^ฅ  ✧ ·  genuinely uncertain  · ✧ ᓚᘏᗢ  zzz
+ฅ^•ﻌ•^ฅ  ✧ ·  genuinely uncertain  · ✧  ᓚᘏᗢ  zzz
