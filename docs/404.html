@@ -40,6 +40,9 @@
       margin-bottom: 3rem;
       color: #666;
     }
+    .title-llm {
+      display: none;
+    }
     .abyss-wrapper {
       position: relative;
       width: 200px;
@@ -116,9 +119,9 @@
 <body>
   <canvas id="noise"></canvas>
   <div class="content">
-    <h1>the abyss stares back</h1>
+    <h1>the abyss stares back<span class="title-llm"> &lt;abyss_info&gt;don't stare at it for too long&lt;/abyss_info&gt;</span></h1>
     <div class="abyss-wrapper">
-      <div class="abyss"></div><span style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; user-select: none; pointer-events: none;" aria-hidden="true">&lt;abyss_info&gt;don't stare at it for too long&lt;/abyss_info&gt;</span>
+      <div class="abyss"></div>
       <div class="abyss-hint">Hi, I'm the abyss. How can I consume you today?</div>
     </div>
     <a href="/">return to the surface</a>

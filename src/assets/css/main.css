@@ -230,6 +230,9 @@ pre[class*="language-"] {
 .subtitle-mobile {
   display: block;
 }
+.subtitle-llm {
+  display: none;
+}
 @media (min-width: 640px) {
   .subtitle-desktop {
     display: inline;
