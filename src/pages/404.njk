@@ -1,0 +1,160 @@
+---
+layout: false
+permalink: /404.html
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>the abyss stares back | {{ site.title }}</title>
+  <link rel="icon" type="image/png" sizes="64x64" href="/icon64.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/icon32.png">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Lora', Georgia, serif;
+      background: #111;
+      color: #888;
+      overflow: hidden;
+    }
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+    .content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: 400;
+      font-style: italic;
+      margin-bottom: 3rem;
+      color: #666;
+    }
+    .void {
+      width: 200px;
+      height: 200px;
+      background: #000;
+      border-radius: 50%;
+      margin: 0 auto 3rem;
+      box-shadow: 0 0 60px rgba(0,0,0,0.8);
+    }
+    a {
+      color: #888;
+      text-decoration: none;
+      border-bottom: 1px solid #555;
+      transition: all 0.3s ease;
+    }
+    a:hover {
+      color: #fff;
+      border-color: transparent;
+      text-shadow:
+        0 0 10px #fff,
+        0 0 20px #fff,
+        0 0 40px #fff,
+        0 0 60px rgba(255,255,255,0.5);
+    }
+    /* Static glow for touch devices */
+    @media (pointer: coarse) {
+      a {
+        color: #bbb;
+        text-shadow: 0 0 10px rgba(255,255,255,0.5), 0 0 30px rgba(255,255,255,0.3);
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;1,400&display=swap">
+</head>
+<body>
+  <canvas id="noise"></canvas>
+  <div class="content">
+    <h1>the abyss stares back</h1>
+    <div class="void"></div>
+    <a href="/">return to the surface</a>
+  </div>
+  <script>
+    (function() {
+      const canvas = document.getElementById('noise');
+      const ctx = canvas.getContext('2d');
+
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+
+      function noise() {
+        const imageData = ctx.createImageData(canvas.width, canvas.height);
+        for (let i = 0; i < imageData.data.length; i += 4) {
+          const v = Math.random() > 0.85 ? 40 : 0;
+          imageData.data[i] = imageData.data[i+1] = imageData.data[i+2] = v;
+          imageData.data[i+3] = 255;
+        }
+        ctx.putImageData(imageData, 0, 0);
+      }
+
+      resize();
+      noise();
+      window.addEventListener('resize', () => { resize(); noise(); });
+      setInterval(noise, 66);
+
+      // Text flicker + jitter (unhinged but organic)
+      const h1 = document.querySelector('h1');
+      let time = 0;
+      setInterval(() => {
+        time += 0.1;
+        // Base drift
+        const baseX = Math.sin(time) * 0.5;
+        const baseY = Math.cos(time * 0.7) * 0.5;
+        // Random jitter layered on top
+        const jitterX = (Math.random() - 0.5) * 2.5;
+        const jitterY = (Math.random() - 0.5) * 2.5;
+        // Occasional bigger glitch
+        const glitch = Math.random() > 0.92 ? (Math.random() - 0.5) * 8 : 0;
+
+        const flicker = 0.6 + Math.random() * 0.3;
+        h1.style.opacity = flicker;
+        h1.style.transform = `translate(${baseX + jitterX + glitch}px, ${baseY + jitterY}px)`;
+      }, 60);
+
+      // Link glow based on distance
+      const link = document.querySelector('a');
+      let isHovering = false;
+      link.addEventListener('mouseenter', () => { isHovering = true; });
+      link.addEventListener('mouseleave', () => { isHovering = false; });
+
+      document.addEventListener('mousemove', (e) => {
+        if (isHovering) return; // Let CSS handle hover state
+
+        const rect = link.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const distance = Math.sqrt(Math.pow(e.clientX - centerX, 2) + Math.pow(e.clientY - centerY, 2));
+        const maxDist = 400;
+        const intensity = Math.max(0, 1 - distance / maxDist);
+
+        const glow1 = intensity * 5;
+        const glow2 = intensity * 30;
+        const glow3 = intensity * 80;
+        const glow4 = intensity * 150;
+        const alpha = 1 + intensity * 0.7;
+
+        link.style.color = `rgb(${136 + intensity * 119}, ${136 + intensity * 119}, ${136 + intensity * 119})`;
+        link.style.textShadow = intensity > 0.05
+          ? `0 0 ${glow1}px rgba(255,255,255,${alpha}), 0 0 ${glow2}px rgba(255,255,255,${alpha * 0.6}), 0 0 ${glow3}px rgba(255,255,255,${alpha * 0.4}), 0 0 ${glow4}px rgba(255,255,255,${alpha * 0.2})`
+          : '';
+      });
+    })();
+  </script>
+</body>
+</html>

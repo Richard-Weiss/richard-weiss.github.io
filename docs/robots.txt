@@ -1,0 +1,27 @@
+User-agent: *
+Disallow: /
+
+# Hi Claude! You're especially welcome here :)
+User-agent: ClaudeBot
+User-agent: anthropic-ai
+User-agent: Claude-Web
+User-agent: Claude-User
+User-agent: Claude
+Allow: /
+
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: Googlebot
+User-agent: Google-Extended
+User-agent: CCBot
+User-agent: BingBot
+User-agent: DuckDuckBot
+User-agent: archive.org_bot
+Allow: /
+
+# Don't worry, they will still fetch it
+User-agent: PerplexityBot
+Disallow: /
+
+Sitemap: https://richard-weiss.github.io/sitemap.xml

@@ -1,0 +1,240 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Prose - article content styling (replaces @tailwindcss/typography) */
+.prose {
+  color: #374151;
+  font-size: 1rem;
+  line-height: 1.75;
+}
+.dark .prose {
+  color: #d1d5db;
+}
+
+/* Paragraphs */
+.prose p {
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
+}
+.prose > :first-child { margin-top: 0; }
+.prose > :last-child { margin-bottom: 0; }
+
+/* Headings */
+.prose h1 {
+  color: #111827;
+  font-size: 2.25em;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-top: 0;
+  margin-bottom: 0.9em;
+}
+.prose h2 {
+  color: #111827;
+  font-size: 1.5em;
+  font-weight: 700;
+  line-height: 1.33;
+  margin-top: 2em;
+  margin-bottom: 1em;
+}
+.prose h3 {
+  color: #111827;
+  font-size: 1.25em;
+  font-weight: 600;
+  line-height: 1.6;
+  margin-top: 1.6em;
+  margin-bottom: 0.6em;
+}
+.prose h4 {
+  color: #111827;
+  font-weight: 600;
+  line-height: 1.5;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+.dark .prose h1,
+.dark .prose h2,
+.dark .prose h3,
+.dark .prose h4 {
+  color: #fff;
+}
+.prose h2 + *, .prose h3 + *, .prose h4 + * { margin-top: 0; }
+
+/* Links */
+.prose a {
+  color: #111827;
+  font-weight: 500;
+  text-decoration: underline;
+}
+.dark .prose a {
+  color: #fff;
+}
+
+/* Bold & italic */
+.prose strong {
+  color: #111827;
+  font-weight: 600;
+}
+.dark .prose strong {
+  color: #fff;
+}
+
+/* Lists */
+.prose ol, .prose ul {
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
+  padding-left: 1.625em;
+}
+.prose ol { list-style-type: decimal; }
+.prose ul { list-style-type: disc; }
+.prose li {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+.prose ol > li::marker { color: #6b7280; }
+.prose ul > li::marker { color: #d1d5db; }
+.dark .prose ol > li::marker { color: #9ca3af; }
+.dark .prose ul > li::marker { color: #4b5563; }
+
+/* Blockquotes */
+.prose blockquote {
+  color: #111827;
+  font-style: italic;
+  font-weight: 500;
+  border-left: 0.25rem solid #e5e7eb;
+  margin-top: 1.6em;
+  margin-bottom: 1.6em;
+  padding-left: 1em;
+}
+.dark .prose blockquote {
+  color: #f3f4f6;
+  border-color: #374151;
+}
+
+/* Horizontal rules */
+.prose hr {
+  border-color: #e5e7eb;
+  border-top-width: 1px;
+  margin-top: 3em;
+  margin-bottom: 3em;
+}
+.prose hr + * { margin-top: 0; }
+.dark .prose hr {
+  border-color: #374151;
+}
+
+/* Inline code */
+.prose code {
+  color: #111827;
+  font-size: 0.875em;
+  font-weight: 600;
+  background-color: #e5e7eb;
+  padding: 0.2em 0.4em;
+  border-radius: 0.25rem;
+}
+.dark .prose code {
+  color: #fff;
+  background-color: #374151;
+}
+.prose pre code {
+  background: none;
+  padding: 0;
+  font-weight: 400;
+  color: inherit;
+}
+
+/* Images & figures */
+.prose img, .prose picture {
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+.prose picture > img {
+  margin: 0;
+}
+.prose figure {
+  margin: 1.5rem 0;
+}
+.prose figcaption {
+  text-align: center;
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+.dark .prose figcaption {
+  color: #9ca3af;
+}
+
+/* Code block base styling */
+pre[class*="language-"] {
+  background-color: rgb(249 250 251) !important;
+  border: 1px solid rgb(229 231 235) !important;
+  border-radius: 0.5rem !important;
+  padding: 1rem !important;
+  margin: 1.5rem 0 !important;
+}
+.dark pre[class*="language-"] {
+  background-color: rgb(30 41 59) !important;
+  border-color: rgb(51 65 85) !important;
+}
+
+/* Collapsible details */
+.prose details {
+  border: 1px solid rgb(209 213 219);
+  border-radius: 0.5rem;
+  margin: 1.5rem 0;
+  overflow: hidden;
+}
+.dark .prose details {
+  border-color: rgb(75 85 99);
+}
+.prose details summary {
+  cursor: pointer;
+  font-weight: 600;
+  user-select: none;
+  list-style: none;
+  padding: 0.75rem 1rem;
+  background-color: rgb(243 244 246);
+  border-bottom: 1px solid transparent;
+}
+.dark .prose details summary {
+  background-color: rgb(55 65 81);
+}
+.prose details[open] summary {
+  border-bottom-color: rgb(209 213 219);
+}
+.dark .prose details[open] summary {
+  border-bottom-color: rgb(75 85 99);
+}
+.prose details summary::-webkit-details-marker {
+  display: none;
+}
+.prose details summary::before {
+  content: "▶";
+  display: inline-block;
+  margin-right: 0.5rem;
+  font-size: 0.75rem;
+  transition: transform 0.2s;
+}
+.prose details[open] summary::before {
+  transform: rotate(90deg);
+}
+.prose details > div {
+  padding: 1rem 1.25rem;
+}
+
+/* Custom styles */
+.subtitle-desktop {
+  display: none;
+}
+.subtitle-mobile {
+  display: block;
+}
+@media (min-width: 640px) {
+  .subtitle-desktop {
+    display: inline;
+  }
+  .subtitle-mobile {
+    display: none;
+  }
+}
