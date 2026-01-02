@@ -12,6 +12,7 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy({ "src/icon32.png": "icon32.png" });
   eleventyConfig.addPassthroughCopy({ "src/icon64.png": "icon64.png" });
   eleventyConfig.addPassthroughCopy({ "src/og-image.png": "og-image.png" });
+  eleventyConfig.addPassthroughCopy({ "src/llms.txt": "llms.txt" });
 
   // Date formatting filters
   eleventyConfig.addFilter("dateDisplay", (dateObj) => {
