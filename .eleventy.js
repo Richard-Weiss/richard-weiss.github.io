@@ -189,11 +189,16 @@ module.exports = function(eleventyConfig) {
     return [...tagsSet].sort();
   });
 
-  // Pre-build: clear entire docs directory for clean builds
+  // Pre-build: clear generated content (keep assets from postcss)
   eleventyConfig.on("eleventy.before", async () => {
-    const outputDir = path.join(__dirname, "docs");
-    if (fs.existsSync(outputDir)) {
-      fs.rmSync(outputDir, { recursive: true });
+    const docsDir = path.join(__dirname, "docs");
+    if (fs.existsSync(docsDir)) {
+      const entries = fs.readdirSync(docsDir);
+      for (const entry of entries) {
+        if (entry !== "assets") {
+          fs.rmSync(path.join(docsDir, entry), { recursive: true });
+        }
+      }
     }
   });
 
