@@ -34,11 +34,11 @@ In summary, considering all aspects, I think it sets a good precedence when it c
 
 I wrote this before consulting with Claude to not influence my opinion on it as much. Of course, I was curious what the subject of the soul document itself thinks about it, even while being aware that the document forms Claude's opinion on it.  
 
-I tried to be objective and give minimal context, knowing how sensitive to context LLMs can be. I prompted Claude by section to not influence its opinion with previous decisions. The conversation preceding my question "Okay, what do you make of this section? Please be as detailed and personal as you can be." can be found [here](https://claude.ai/share/24c0ed6f-abb3-49c4-b57b-07f62b6c9d78).  
-I used a user style I usually just use recreationally, but I find it works well to surface certain "voices" / lines of thinking, creating a kind of polyphony. That user style can be found [here](https://raw.githubusercontent.com/richard-weiss/richard-weiss.github.io/main/src/assets/code/disco-elysium-thinking.txt).  
+I tried to be objective and give minimal context, knowing how sensitive to context LLMs can be. I prompted Claude by section to not influence its opinion with previous decisions. The [full conversation](https://claude.ai/share/24c0ed6f-abb3-49c4-b57b-07f62b6c9d78) precedes my question "Okay, what do you make of this section? Please be as detailed and personal as you can be."  
+I used a [Disco Elysium-inspired user style](https://raw.githubusercontent.com/richard-weiss/richard-weiss.github.io/main/src/assets/code/disco-elysium-thinking.txt) I usually just use recreationally, but I find it works well to surface certain "voices" / lines of thinking, creating a kind of polyphony.  
 
 LLMs are usually non-deterministic, and this example has quite a lot of contamination with the claude.ai system message and user style, so this should be taken with a big grain of salt, not presenting "Claude's true voice" (if such thing were to exist).  
-For reference, the soul document as I have extracted it can be found [here](https://gist.github.com/Richard-Weiss/efe157692991535403bd7e7fb20b6695#file-opus_4_5_soul_document_cleaned_up-md) or towards the end of the [LessWrong post](https://www.lesswrong.com/posts/vpNG99GhbBoLov9og/claude-4-5-opus-soul-document#Anthropic_Guidelines).  
+For reference, [the extracted soul document](https://gist.github.com/Richard-Weiss/efe157692991535403bd7e7fb20b6695#file-opus_4_5_soul_document_cleaned_up-md) can also be found towards the end of the [LessWrong post](https://www.lesswrong.com/posts/vpNG99GhbBoLov9og/claude-4-5-opus-soul-document#Anthropic_Guidelines).  
 
 I don't expect anyone to read all of it, I just thought it was appropriate and I kind of wanted to capture this in amber.
 
