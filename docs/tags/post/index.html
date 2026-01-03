@@ -20,7 +20,38 @@
   <link rel="me" href="https://reddit.com/u/Incener">
   <link rel="preload" href="/assets/css/main.css" as="style">
   <link rel="stylesheet" href="/assets/css/main.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&display=swap">
+  <style>
+    /* Fallback font with metrics adjusted to match Lora */
+    @font-face {
+      font-family: 'Lora Fallback';
+      src: local('Georgia'), local('Times New Roman'), local('serif');
+      size-adjust: 107%;
+      ascent-override: 103%;
+      descent-override: 26%;
+      line-gap-override: 0%;
+    }
+    @font-face {
+      font-family: 'Lora';
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: url(https://fonts.gstatic.com/l/font?kit=0QIvMX1D_JOuAwjxJNNOrZKO0p713CdglYB_s_S0-LKefz4mn0FhS44jhuJyYLkPKOG6L2KjTDPvhzLwNdWzhnvAj4VpeBU-3__UvsteF4D6-iOsm2kjH0PeH7wIR8gMk-TGw1QRDRwywFzlJkJK8YF6ZDg&skey=1d294b6d956fb8e&v=v37) format('woff2');
+    }
+    @font-face {
+      font-family: 'Lora';
+      font-style: normal;
+      font-weight: 600;
+      font-display: swap;
+      src: url(https://fonts.gstatic.com/l/font?kit=0QIvMX1D_JOuAwjxJNNOrZKO0p713CdglYB_s_S0-LKefz4mn0FhS44jhuJyYLkPKOG6L2KjTDPvhzLwNdWzhnvAj4VpeBU-3__UvsteF4D6-iOsm2kjH0PeH7wIR8gMk-TGw1QRDRwywFzlJkJK8YF6ZDg&skey=1d294b6d956fb8e&v=v37) format('woff2');
+    }
+    @font-face {
+      font-family: 'Lora';
+      font-style: normal;
+      font-weight: 700;
+      font-display: swap;
+      src: url(https://fonts.gstatic.com/l/font?kit=0QIvMX1D_JOuAwjxJNNOrZKO0p713CdglYB_s_S0-LKefz4mn0FhS44jhuJyYLkPKOG6L2KjTDPvhzLwNdWzhnvAj4VpeBU-3__UvsteF4D6-iOsm2kjH0PeH7wIR8gMk-TGw1QRDRwywFzlJkJK8YF6ZDg&skey=1d294b6d956fb8e&v=v37) format('woff2');
+    }
+  </style>
   <link id="prism-light" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prism-themes@1.9.0/themes/prism-vs.min.css">
   <link id="prism-dark" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prism-themes@1.9.0/themes/prism-vsc-dark-plus.min.css" disabled>
   <style>
@@ -81,7 +112,7 @@
     })();
   </script>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col transition-colors" style="font-family: 'Lora', serif;">
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col transition-colors" style="font-family: 'Lora', 'Lora Fallback', Georgia, serif;">
   <canvas id="noise-bg"></canvas>
   <script>
     (function() {
