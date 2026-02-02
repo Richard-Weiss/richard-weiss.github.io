@@ -5,17 +5,25 @@ const fs = require("fs");
 
 // Shared helper: transform relative asset paths to absolute URLs
 function getAssetUrl(relativePath, isProd, siteData, raw = false) {
+  // Image paths in markdown are relative (e.g. "post-name/img.webp") but live
+  // under src/assets/images/. Non-image assets like code/ already include their
+  // subfolder, so only prefix "images/" when the path doesn't start with a
+  // known top-level asset folder.
+  const knownAssetDirs = ['code/', 'css/', 'fonts/', 'js/'];
+  const isImage = !knownAssetDirs.some(d => relativePath.startsWith(d));
+  const assetPath = isImage ? `images/${relativePath}` : relativePath;
+
   if (isProd) {
     if (raw) {
       // raw.githubusercontent.com for direct content access (LLMs)
       const rawBase = siteData.github.replace('github.com', 'raw.githubusercontent.com');
-      return `${rawBase}/${siteData.githubBranch}/src/assets/${relativePath}`;
+      return `${rawBase}/${siteData.githubBranch}/src/assets/${assetPath}`;
     }
     // Regular GitHub blob view for HTML links
     const githubBase = `${siteData.github}/blob/${siteData.githubBranch}/src/assets`;
-    return `${githubBase}/${relativePath}`;
+    return `${githubBase}/${assetPath}`;
   }
-  return `/assets/${relativePath}`;
+  return `/assets/${assetPath}`;
 }
 
 module.exports = function(eleventyConfig) {
