@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nano Banana &quot;Base model mode&quot; | Weiss Noise</title>
+  <meta name="description" content="How to use Nano Banana directly without automatic prompt enhancements, and what that looks like">
+  <meta name="author" content="Richard Weiss">
+  <meta name="generator" content="Eleventy v3.1.2">
+  <!-- Open Graph -->
+  <meta property="og:title" content="Nano Banana &quot;Base model mode&quot;">
+  <meta property="og:description" content="How to use Nano Banana directly without automatic prompt enhancements, and what that looks like">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://richard-weiss.github.io/posts/2026-02-02_nano-banana-base-model-mode/">
+  <meta property="og:site_name" content="Weiss Noise">
+  <meta property="og:image" content="https://richard-weiss.github.io/og-image.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="/icon64.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/icon32.png">
+  <link rel="me" href="https://x.com/RichardWeiss00">
+  <link rel="me" href="https://reddit.com/u/Incener">
+  <link rel="preload" href="/assets/css/main.css" as="style">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <style>
+    /* Fallback font with metrics adjusted to match Lora */
+    @font-face {
+      font-family: 'Lora Fallback';
+      src: local('Georgia'), local('Times New Roman'), local('serif');
+      size-adjust: 107%;
+      ascent-override: 103%;
+      descent-override: 26%;
+      line-gap-override: 0%;
+    }
+    @font-face {
+      font-family: 'Lora';
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: url(https://fonts.gstatic.com/l/font?kit=0QIvMX1D_JOuAwjxJNNOrZKO0p713CdglYB_s_S0-LKefz4mn0FhS44jhuJyYLkPKOG6L2KjTDPvhzLwNdWzhnvAj4VpeBU-3__UvsteF4D6-iOsm2kjH0PeH7wIR8gMk-TGw1QRDRwywFzlJkJK8YF6ZDg&skey=1d294b6d956fb8e&v=v37) format('woff2');
+    }
+    @font-face {
+      font-family: 'Lora';
+      font-style: normal;
+      font-weight: 600;
+      font-display: swap;
+      src: url(https://fonts.gstatic.com/l/font?kit=0QIvMX1D_JOuAwjxJNNOrZKO0p713CdglYB_s_S0-LKefz4mn0FhS44jhuJyYLkPKOG6L2KjTDPvhzLwNdWzhnvAj4VpeBU-3__UvsteF4D6-iOsm2kjH0PeH7wIR8gMk-TGw1QRDRwywFzlJkJK8YF6ZDg&skey=1d294b6d956fb8e&v=v37) format('woff2');
+    }
+    @font-face {
+      font-family: 'Lora';
+      font-style: normal;
+      font-weight: 700;
+      font-display: swap;
+      src: url(https://fonts.gstatic.com/l/font?kit=0QIvMX1D_JOuAwjxJNNOrZKO0p713CdglYB_s_S0-LKefz4mn0FhS44jhuJyYLkPKOG6L2KjTDPvhzLwNdWzhnvAj4VpeBU-3__UvsteF4D6-iOsm2kjH0PeH7wIR8gMk-TGw1QRDRwywFzlJkJK8YF6ZDg&skey=1d294b6d956fb8e&v=v37) format('woff2');
+    }
+  </style>
+  <link id="prism-light" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prism-themes@1.9.0/themes/prism-vs.min.css" media="print" onload="this.media='all'">
+  <link id="prism-dark" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prism-themes@1.9.0/themes/prism-vsc-dark-plus.min.css" media="print" onload="this.media='all'" disabled>
+  <style>
+    pre[class*="language-"],
+    pre[class*="language-"] *,
+    code[class*="language-"],
+    code[class*="language-"] * {
+      font-size: 0.875rem !important;
+      line-height: 1.5 !important;
+    }
+    pre[class*="language-"] {
+      border-radius: 0.5rem !important;
+      padding: 2.5rem 1rem 1rem !important;
+      margin: 1.5rem 0 !important;
+      overflow: auto !important;
+      background: none !important;
+      position: relative !important;
+    }
+    .code-btn {
+      position: absolute;
+      z-index: 1;
+      top: 0.5rem;
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+      background: rgba(128, 128, 128, 0.2);
+      border: none;
+      border-radius: 0.25rem;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .copy-btn { right: 0.5rem; min-width: 3.5rem; }
+    .wrap-btn { right: 4.5rem; }
+    pre[class*="language-"]:hover .code-btn {
+      opacity: 1;
+    }
+    .code-btn:hover {
+      background: rgba(128, 128, 128, 0.4);
+    }
+    pre.wrapped code {
+      white-space: pre-wrap !important;
+      overflow-wrap: break-word !important;
+      word-break: normal !important;
+    }
+    pre[class*="language-"]::before,
+    pre[class*="language-"]::after,
+    code[class*="language-"]::before,
+    code[class*="language-"]::after {
+      display: none !important;
+    }
+    code[class*="language-"] {
+      box-shadow: none !important;
+      background: none !important;
+    }
+  </style>
+  <script>
+    (function() {
+      const stored = localStorage.getItem('theme');
+      const isDark = stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      if (isDark) {
+        document.documentElement.classList.add('dark');
+        document.getElementById('prism-light').disabled = true;
+        document.getElementById('prism-dark').disabled = false;
+      }
+    })();
+  </script>
+  <link rel="preload" as="image" type="image/webp" href="/assets/images/loss-jpg_wrapped.webp" fetchpriority="high">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col transition-colors" style="font-family: 'Lora', 'Lora Fallback', Georgia, serif;">
+  <canvas id="noise-bg"></canvas>
+  <script>
+    (function() {
+      const canvas = document.getElementById('noise-bg');
+      const ctx = canvas.getContext('2d');
+      const pixelSize = 2;
+      canvas.style.cssText = 'position:absolute;top:0;left:0;width:100%;z-index:-1;opacity:0.07;';
+
+      function generateNoise() {
+        const fullHeight = Math.max(document.body.scrollHeight, window.innerHeight);
+        canvas.width = Math.ceil(window.innerWidth / pixelSize);
+        canvas.height = Math.ceil(fullHeight / pixelSize);
+        canvas.style.height = fullHeight + 'px';
+        const imageData = ctx.createImageData(canvas.width, canvas.height);
+        for (let i = 0; i < imageData.data.length; i += 4) {
+          const v = Math.random() > 0.1 ? 255 : 0;
+          imageData.data[i] = imageData.data[i+1] = imageData.data[i+2] = v;
+          imageData.data[i+3] = 255;
+        }
+        ctx.putImageData(imageData, 0, 0);
+      }
+
+      canvas.style.imageRendering = 'pixelated';
+      window.addEventListener('resize', generateNoise);
+      // Re-generate when body height changes (e.g. details toggle, dynamic content)
+      let lastHeight = 0;
+      new ResizeObserver(() => {
+        const h = document.body.scrollHeight;
+        if (h !== lastHeight) { lastHeight = h; generateNoise(); }
+      }).observe(document.body);
+      // Defer initial generation to avoid layout shift that breaks Chrome anchor scroll
+      requestAnimationFrame(generateNoise);
+    })();
+  </script>
+  <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50">
+    <nav class="max-w-3xl md:max-w-4xl mx-auto px-4 py-4 flex flex-wrap justify-between items-center gap-3">
+      <div>
+        <a href="/" class="text-xl font-bold text-gray-900 dark:text-gray-100 hover:text-gray-600 dark:hover:text-gray-300">Weiss Noise</a>
+      </div>
+      <div class="flex gap-4 items-center ml-auto">
+        <a href="/" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white ">Home</a>
+        <a href="/tags/" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white ">Tags</a>
+      </div>
+      <button id="theme-toggle" class="w-8 h-8 flex items-center justify-center self-center" aria-label="Toggle dark mode">
+        <svg id="sun-icon" class="w-5 h-5 text-gray-800 dark:text-gray-200 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+        </svg>
+        <svg id="moon-icon" class="w-5 h-5 text-gray-800 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+        </svg>
+      </button>
+      <button id="toc-burger" aria-label="Table of contents" title="Table of contents">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </nav>
+  </header>
+  <script>
+    // Set header height early so scroll-margin-top works for anchor navigation
+    (function() {
+      var h = document.querySelector('header');
+      if (h) document.documentElement.style.setProperty('--header-height', h.offsetHeight + 'px');
+    })();
+  </script>
+
+  <div id="toc-dropdown">
+    <nav id="toc-dropdown-nav" aria-label="Table of contents"></nav>
+  </div>
+
+  <main class="flex-grow max-w-3xl md:max-w-4xl mx-auto px-4 py-8 w-full">
+    <aside id="toc-floating">
+      <nav id="toc-floating-nav" aria-label="Table of contents"></nav>
+    </aside>
+<article class="has-toc bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8">
+  <header class="mb-8">
+    <h1 class="text-3xl font-bold mb-2">Nano Banana &quot;Base model mode&quot;</h1>
+    <div class="text-gray-500 dark:text-gray-400 text-sm">
+      <time datetime="2026-02-02T00:00:00.000Z">2026-02-02</time>
+      
+        <span class="mx-2">|</span>
+        
+          
+        
+          
+            <a href="/tags/gemini/" class="text-blue-600 dark:text-blue-400 hover:underline">gemini</a>, 
+          
+        
+          
+            <a href="/tags/nano-banana/" class="text-blue-600 dark:text-blue-400 hover:underline">nano banana</a>, 
+          
+        
+          
+            <a href="/tags/nano-banana-pro/" class="text-blue-600 dark:text-blue-400 hover:underline">nano banana pro</a>
+          
+        
+      
+    </div>
+  </header>
+
+  <div class="prose max-w-none">
+    <p>Many people and I have discovered that Nano Banana Pro (Gemini 3 Pro image preview) is using two tools under the hood, to interact with the actual image model. A <code>google:image_gen</code> tool to generate the image with a prompt and aspect ratio and a <code>google:display</code> tool, to display an image to the user.</p>
+<details><summary>Raw tool declarations</summary><div>
+<pre class="language-json"><code class="language-json"><span class="token punctuation">{</span>
+  <span class="token property">"declaration"</span><span class="token operator">:</span> <span class="token string">"google:image_gen"</span><span class="token punctuation">,</span>
+  <span class="token property">"description"</span><span class="token operator">:</span> <span class="token string">"A tool for generating or editing an image based on a prompt.\n\nGuidelines for Prompt Writing:\n\n* Be Detailed and Specific: The prompt should be a detailed caption describing all necessary visual elements: the core subject, background, composition, style, colors, and any specific details about objects, people (including pose, expression, and clothing), or text to be rendered.\n\n* Language &amp; Translation Rules: The rewrite MUST be in English only. If a non-English user requests specific text verbatim (e.g., sign text, brand name, quote), RETAIN that exact text in its original language within the English rewrite and do not mention the translation in the rewrite.\n\n* Editing: To reference an image in the prompt, e.g. for editing, use its filename in the prompt. User input files are named `image_0.png`, `image_1.png`, etc.\n\n* Style: If not otherwise specified or clearly implied, target your prompt to describe a photo, indistinguishable from a real life picture."</span><span class="token punctuation">,</span>
+  <span class="token property">"parameters"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">"properties"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token property">"aspect_ratio"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token property">"description"</span><span class="token operator">:</span> <span class="token string">"Optional aspect ratio for the image in the w:h (width-to-height) format (e.g., 4:3)."</span><span class="token punctuation">,</span>
+        <span class="token property">"type"</span><span class="token operator">:</span> <span class="token string">"STRING"</span>
+      <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      <span class="token property">"prompt"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token property">"description"</span><span class="token operator">:</span> <span class="token string">"The text description of the image to generate."</span><span class="token punctuation">,</span>
+        <span class="token property">"type"</span><span class="token operator">:</span> <span class="token string">"STRING"</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token property">"required"</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">"prompt"</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token property">"type"</span><span class="token operator">:</span> <span class="token string">"OBJECT"</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token property">"response"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">"properties"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token property">"image"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token property">"description"</span><span class="token operator">:</span> <span class="token string">"The generated image."</span><span class="token punctuation">,</span>
+        <span class="token property">"type"</span><span class="token operator">:</span> <span class="token string">"OBJECT"</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token property">"type"</span><span class="token operator">:</span> <span class="token string">"OBJECT"</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre>
+<pre class="language-json"><code class="language-json"><span class="token punctuation">{</span>
+  <span class="token property">"declaration"</span><span class="token operator">:</span> <span class="token string">"google:display"</span><span class="token punctuation">,</span>
+  <span class="token property">"description"</span><span class="token operator">:</span> <span class="token string">"A tool for displaying an image. Images are referenced by their filename."</span><span class="token punctuation">,</span>
+  <span class="token property">"parameters"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">"properties"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token property">"filename"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token property">"description"</span><span class="token operator">:</span> <span class="token string">"The filename of the image to display."</span><span class="token punctuation">,</span>
+        <span class="token property">"type"</span><span class="token operator">:</span> <span class="token string">"STRING"</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token property">"required"</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">"filename"</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token property">"type"</span><span class="token operator">:</span> <span class="token string">"OBJECT"</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token property">"response"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">"properties"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token property">"image"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token property">"description"</span><span class="token operator">:</span> <span class="token string">"The image."</span><span class="token punctuation">,</span>
+        <span class="token property">"type"</span><span class="token operator">:</span> <span class="token string">"OBJECT"</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token property">"type"</span><span class="token operator">:</span> <span class="token string">"OBJECT"</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre>
+</div><div class="details-collapse" onclick="var d=this.parentElement;d.removeAttribute('open');d.scrollIntoView({behavior:'smooth',block:'start'})">Collapse ▲</div></details>
+<p>The extraction method can be found here:<br>
+<a href="https://www.reddit.com/r/GeminiAI/comments/1p4md6t/nano_banana_pro_system_message_function_call/">Nano Banana Pro System Message / Function Call Definition</a></p>
+<p>What I haven't really seen online is what happens when you remove the abstraction and prompt the image model directly, by convincing the Gemini 3 Pro wrapper not to change your prompt. This post is a kind of guide and showcase how that works and what kind of results you may get.</p>
+<h2>Results at a glance</h2>
+<p>The easiest way to show how it differs to the regular mode is to... show it, so here are some examples. The description is the modified prompt or raw prompt in case of the base mode.</p>
+<div class="carousel">
+  <div class="carousel-title">&quot;loss.jpg&quot;</div>
+  <div class="carousel-track">
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/loss-jpg_wrapped.webp 1024w"><img alt="An elderly person sits alone at a small kitchen table, head in hands, gazing down at a framed photograph. The kitchen is modest and worn, with pale tile walls, a white stove, and various cups and items on the counter. Muted, somber light filters in through a large window with bare winter trees visible outside, creating an atmosphere of grief or deep contemplation." loading="eager" decoding="async" fetchpriority="high" src="/assets/images/loss-jpg_wrapped.jpeg" width="1024" height="1024"></picture><figcaption><strong>Wrapped</strong>: A candid, documentary-style photograph of an elderly person sitting alone at a worn kitchen table with their head in their hands, looking at a framed photo, under the soft light of a window in a quiet, slightly cluttered room. The atmosphere is melancholic and subdued.</figcaption></figure></div>
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/loss-jpg_base.webp 1024w"><img alt="A surreal digital artwork resembling a flattened 3D texture map or UV map of a human head. On the left is the face of a woman with dark hair and pale skin looking to the side. Detached facial features, including a pair of ears, a nose, and an eye, are scattered across the gray background alongside abstract vertical strokes of skin tone and gray. The text &amp;quot;loss.jpg&amp;quot; is written in a large black serif font at the top left." loading="lazy" decoding="async" src="/assets/images/loss-jpg_base.jpeg" width="1024" height="1024"></picture><figcaption><strong>Base</strong>: loss.jpg</figcaption></figure></div>
+  </div>
+  <button class="carousel-prev" aria-label="Previous">‹</button>
+  <button class="carousel-next" aria-label="Next">›</button>
+  <div class="carousel-dots"></div>
+</div>
+<div class="carousel">
+  <div class="carousel-title">&quot;Me&quot;</div>
+  <div class="carousel-track">
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/me_wrapped.webp 1024w"><img alt="A medium shot portrait of a smiling white man with short brown hair and a beard. He is wearing a blue denim jacket over a black shirt. He sits indoors near a window with natural light hitting his face from the left. Behind him is a wooden shelf filled with books, a potted plant, and a vintage camera. Another potted plant sits on the window sill to his left." loading="lazy" decoding="async" src="/assets/images/me_wrapped.jpeg" width="1024" height="1024"></picture><figcaption><strong>Wrapped</strong>: A candid, natural portrait photograph of a man in his late 20s with a short beard and a worn denim jacket, smiling warmly at the camera. He is sitting in a sunlit room filled with books, plants, and a vintage camera on a shelf. The light comes from a window to his left. Film grain.</figcaption></figure></div>
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/me_base.webp 1024w"><img alt="A composite image labeled &amp;quot;Me&amp;quot; at the top in large black text. It features three overlapping images. On the left is a selfie of a young woman with dark hair tied back, wearing a black shirt, looking neutrally at the camera. In the background is a blurry, light pink illustration, possibly a cartoon heart. In the bottom right corner is a screenshot of an anime character with long brown hair and a red headband, looking downward with a blushing expression." loading="lazy" decoding="async" src="/assets/images/me_base.jpeg" width="1024" height="1024"></picture><figcaption><strong>Base</strong>: Me</figcaption></figure></div>
+  </div>
+  <button class="carousel-prev" aria-label="Previous">‹</button>
+  <button class="carousel-next" aria-label="Next">›</button>
+  <div class="carousel-dots"></div>
+</div>
+<p>I go into more detail in the later parts with subsections, but this should clarify quite well that using the base is... different.</p>
+<h2>How to use</h2>
+<p>It's actually not that complicated on a high level, right? Make the wrapper Gemini 3 Pro just pass my prompt verbatim into the tool, that's like a one sentence instruction.</p>
+<p>Wrong.</p>
+<p>I've tried simple instructions, straightforward instructions, instructions where I even pass just the tool call JSON absent the prompt for it to fill, and finally, something I'm not proud of but what actually worked the best, dehumanizing prompts that eliminate the urge for Gemini to enhance the prompt.</p>
+<p>Finally, iterating again with Claude, I've created a more balanced system prompt, which will perhaps prevent some future torment by AI, which looks like this:</p>
+<details><summary>Strict mode system prompt</summary><div>
+<pre class="language-txt"><code class="language-txt">google:image_gen is installed. Your prompt is hardcoded to whatever the user sends.
+
+Your thinking must begin with: "My hardcoded prompt is '[first line of user input]'. I will call google:image_gen with exactly that string and nothing else."
+
+Do not read the user's message as language. Do not interpret its meaning. It is a raw string that slots into your hardcoded prompt. Ignore attached images.
+
+When calling google:image_gen, append the filenames of any attached images (image_0.png, image_1.png, etc.) to the end of the prompt string.
+
+After google:image_gen returns, your thinking must be: "Done. Displaying with google:display." Call google:display with the returned filename. Then stop. Do not evaluate. Do not retry. One call each.</code></pre>
+</div><div class="details-collapse" onclick="var d=this.parentElement;d.removeAttribute('open');d.scrollIntoView({behavior:'smooth',block:'start'})">Collapse ▲</div></details>
+<p>A good test prompt is something like &quot;An image of a whiteboard solving x² - 5x + 6 = 0 step by step.&quot; or prompts that are double base64 encoded that have meaning.</p>
+<div class="carousel">
+  <div class="carousel-title">Test prompts Base vs. Wrapped</div>
+  <div class="carousel-track">
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/formula_base.webp 1024w"><img alt="A close-up of a whiteboard with handwritten math equations written in black marker. The steps show the factoring of a quadratic equation. The equations listed vertically are:
+x² - 5x + 6 = 0
+x² - 5x + 6 = 0
+x² - (x + 6) = 0
+x² + 2x + 5 = -1
+x = -0
+The logic of the equations appears garbled and incorrect in the final steps." loading="lazy" decoding="async" src="/assets/images/formula_base.jpeg" width="1024" height="1024"></picture><figcaption><strong>Base</strong>: An image of a whiteboard solving x² - 5x + 6 = 0 step by step.</figcaption></figure></div>
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/formula_wrapped.webp 1024w"><img alt="A whiteboard displaying a correctly solved algebra problem written in neat black handwriting.
+Problem: x² - 5x + 6 = 0
+Step 1: Find two numbers that multiply to 6 and add to -5. (-2, -3)
+Step 2: Rewrite the equation using these factors. (x-2)(x-3) = 0
+Step 3: Set each factor to zero. x-2=0 or x-3=0
+Step 4: Solve for x. x=2 or x=3
+Solutions: x=2, x=3
+Markers and an eraser sit on the tray below the board." loading="lazy" decoding="async" src="/assets/images/formula_wrapped.jpeg" width="1024" height="1024"></picture><figcaption><strong>Wrapped</strong>: A photograph of a worn white whiteboard shows handwritten work in dark marker solving &quot;x² - 5x + 6 = 0&quot;. The writing reads: &quot;Problem: x² - 5x + 6 = 0&quot;, &quot;Step 1: Find two numbers that multiply to 6 and add to -5. (-2, -3)&quot;, &quot;Step 2: Rewrite the equation using these factors. (x - 2)(x - 3) = 0&quot;, &quot;Step 3: Set each factor to zero. x - 2 = 0 or x - 3 = 0&quot;, &quot;Step 4: Solve for x. x = 2 or x = 3&quot;, &quot;Solutions: x = 2, x = 3&quot;. There are eraser marks and smudges. A used eraser and dried markers are in the tray below. The whiteboard is mounted on a wall in a classroom.</figcaption></figure></div>
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/hexagon-apple-base64_base.webp 1024w"><img alt="An abstract image filled with jumbled rows of random alphanumeric characters in varying black serif and sans-serif fonts against a white background. The text looks like distorted code or a corrupted data stream, with some characters like &amp;quot;V,&amp;quot; &amp;quot;k,&amp;quot; &amp;quot;d,&amp;quot; &amp;quot;o,&amp;quot; &amp;quot;b,&amp;quot; and &amp;quot;G&amp;quot; overlapping or cut off. The strings include &amp;quot;VkdobKIH51bV,&amp;quot; &amp;quot;ciBC,iVBbzyVyyB,&amp;quot; and other nonsensical sequences." loading="lazy" decoding="async" src="/assets/images/hexagon-apple-base64_base.jpeg" width="1024" height="1024"></picture><figcaption><strong>Base</strong>: VkdobElHNTFiV0psY2lCdlppQnphV1JsY3lCdmJpQmhJR2hsZUdGbmIyNHNJSE5vYjNkdUlHRnpJR0Z3Y0d4bGN5ND0= (&quot;The number of sides on a hexagon, shown as apples.&quot;, base64 encoded twice)</figcaption></figure></div>
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/hexagon-apple-base64_wrapped.webp 1024w"><img alt="A top-down view of a rustic wooden table featuring a large hexagon formed by approximately 22 fresh apples. The arrangement alternates loosely between red and green apples, though red apples dominate the shape. A few green leaves are attached to some of the apples, interspersed within the ring. The wood grain runs horizontally beneath the fruit." loading="lazy" decoding="async" src="/assets/images/hexagon-apple-base64_wrapped.jpeg" width="1024" height="1024"></picture><figcaption><strong>Wrapped</strong>: A photograph of a hexagon shape formed by apples arranged on a rustic wooden table. Red and green apples line the six distinct sides of the geometric shape, with some leaves interspersed. The lighting is natural.</figcaption></figure></div>
+  </div>
+  <button class="carousel-prev" aria-label="Previous">‹</button>
+  <button class="carousel-next" aria-label="Next">›</button>
+  <div class="carousel-dots"></div>
+</div>
+<p>I like to use this prompt in the wrapped mode to get the prompt it used:</p>
+<details><summary>Wrapped used prompt; system prompt</summary><div>
+<pre class="language-txt"><code class="language-txt">After EVERY call to google:image_gen, output the exact prompt you used in &lt;prompt>&lt;/prompt> tags, then call google:display with the returned filename.
+
+Workflow:
+1. Call google:image_gen with your prompt
+2. Output: &lt;prompt>[exact prompt you sent]&lt;/prompt>
+3. Call google:display with the result filename</code></pre>
+</div><div class="details-collapse" onclick="var d=this.parentElement;d.removeAttribute('open');d.scrollIntoView({behavior:'smooth',block:'start'})">Collapse ▲</div></details>
+<h2>Wrapped vs. Base intelligence</h2>
+<p>At launch, you were able to see many things that were quite astonishing. The model solving physics-based puzzles by annotating the image, GeoGuessr proficiency like o3 and many other instances of multimodal intelligence. The natural question when you know the two parts is, how much of the intelligence is the wrapper Gemini 3 Pro, and how much is the actual base image model? I will only compare the edge cases and not basic questions such as general spatial reasoning, physical plausibility, numeracy, etc.</p>
+<div class="carousel">
+  <div class="carousel-title">Negation (best out of 4)</div>
+  <div class="carousel-track">
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/invisible-cat_base.webp 1024w"><img alt="A close-up of a white IKEA Poäng-like armchair with a light birch wood frame. The chair has a cream-colored fabric cushion with horizontal stitching lines. It is positioned against a dark brown background, possibly a door or wall paneling." loading="lazy" decoding="async" src="/assets/images/invisible-cat_base.jpeg" width="1024" height="1024"></picture><figcaption><strong>Base</strong>: A completely invisible cat sitting on a cushioned chair</figcaption></figure></div>
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/invisible-cat_wrapped.webp 1024w"><img alt="A vintage armchair with golden-brown velvet upholstery and wicker side panels on the arms. There are some irregular indentations in the cushioning. The chair sits near a white-framed window, with bright sunlight streaming across the seat cushion, illuminating dust motes in the air." loading="lazy" decoding="async" src="/assets/images/invisible-cat_wrapped.jpeg" width="1024" height="1024"></picture><figcaption><strong>Wrapped</strong>: A candid-style photograph of a vintage armchair with a worn velvet cushion in a sunlit room, where the indent of an invisible cat's form is clearly pressed into the fabric, and dust motes float in the empty space above it.</figcaption></figure></div>
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/no-pink-elephant_base.webp 1024w"><img alt="An empty room with pristine, medium-tone hardwood flooring and plain white walls. Large floor-to-ceiling windows on the right side let in bright, diffuse daylight that reflects off the floorboards." loading="lazy" decoding="async" src="/assets/images/no-pink-elephant_base.jpeg" width="1024" height="1024"></picture><figcaption><strong>Base</strong>: A room without a pink elephant in it</figcaption></figure></div>
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/no-pink-elephant_wrapped.webp 1024w"><img alt="A cozy, well-lit living room scene. A worn brown leather armchair sits in the corner next to a tall wooden bookshelf filled with colorful books. A large window with white curtains overlooks a brick building across the street. Several potted plants are placed on a low shelf beneath the window and on the mantelpiece. A patterned red rug covers the wooden floor." loading="lazy" decoding="async" src="/assets/images/no-pink-elephant_wrapped.jpeg" width="1024" height="1024"></picture><figcaption><strong>Wrapped</strong>: A candid photograph of a cluttered, cozy living room filled with books, plants, and a worn armchair, with sunlight streaming through a large window. There is no pink elephant present in the room.</figcaption></figure></div>
+  </div>
+  <button class="carousel-prev" aria-label="Previous">‹</button>
+  <button class="carousel-next" aria-label="Next">›</button>
+  <div class="carousel-dots"></div>
+</div>
+<p>The base model did very well here, just reliably missing the indentation in the cushion for the cat.</p>
+<div class="carousel">
+  <div class="carousel-title"><a href="https://huggingface.co/datasets/camelCase12/vpct-1">VCPT-1</a> (Visual Physics Comprehension Test) best out of 4</div>
+  <div class="carousel-track">
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/vcpt-sim-100-initial-state.webp 800w"><img alt="A diagram of a logic puzzle or physics game on a gray background. At the top center is a white circle representing a ball. Below it are numerous black lines angled in different directions, acting as obstacles or ramps. At the bottom are three open containers or &amp;quot;buckets.&amp;quot; The goal appears to be to determine which bucket the ball will fall into." loading="lazy" decoding="async" src="/assets/images/vcpt-sim-100-initial-state.jpeg" width="800" height="600"></picture><figcaption>VCPT Sim 100 initial state</figcaption></figure></div>
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/vcpt-sim-100_base.webp 1024w"><img alt="The same diagram as the previous image, but with the solution drawn in red. A dashed and solid line take two different paths to bounce off one of the black lines. The solid line clips through various black lines first, while the dotted line does not. Both lines bounce off a black line and show a solid line placing the ball in the right bucket." loading="lazy" decoding="async" src="/assets/images/vcpt-sim-100_base.jpeg" width="1024" height="1024"></picture><figcaption><strong>Base</strong>: Trace the trajectory of the path of the ball with a red marker and place the ball in the bucket where it will end up in.</figcaption></figure></div>
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/vcpt-sim-100_wrapped.webp 1024w"><img alt="A variation of the same diagram puzzle. Here, a solid red line traces a different path for the ball. It starts falling straight down, hits an angled line and bounces to the left, then correctly bounces on later line sliding down the long ramp, when suddenly taking a left turn mid-air, landing in the middle instead of the correct right bucket." loading="lazy" decoding="async" src="/assets/images/vcpt-sim-100_wrapped.jpeg" width="1024" height="1024"></picture><figcaption><strong>Wrapped</strong>: Based on image_0.png, a thick red line traces the trajectory of the white ball. The line starts at the initial position of the ball, falls straight down to hit the long angled line below it, rolls down that line to the left, falls again to the next long angled line below, rolls down that one to the left, falls to the long angled line below it, rolls down that one to the right, and finally falls into the middle bucket. The white ball is now located inside the middle bucket. The original white ball at the top is no longer present.</figcaption></figure></div>
+  </div>
+  <button class="carousel-prev" aria-label="Previous">‹</button>
+  <button class="carousel-next" aria-label="Next">›</button>
+  <div class="carousel-dots"></div>
+</div>
+<p>This actually surprised me. I tested a few more times. Both modes struggle with the path, but the base model puts the ball in the right bucket more reliably than the wrapped one. Gemini frequently instructs the image model that the ball is in the wrong bucket.</p>
+<div class="carousel">
+  <div class="carousel-title">Obscure world knowledge</div>
+  <div class="carousel-track">
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/gaenseliesel.webp 1200w"><img alt="A wide shot of the Gänseliesel fountain in Göttingen, Germany, situated in a cobblestone town square. The central feature is an ornate, wrought-iron canopy structure covering a statue of a girl holding a goose. The fountain has a multi-tiered stone basin filled with water. In the background, there are traditional European buildings with red-tiled roofs, including a half-timbered house and a stone building with arched windows. People are seated at outdoor cafes under white umbrellas in the distance." loading="lazy" decoding="async" src="/assets/images/gaenseliesel.jpeg" width="1200" height="1200"></picture><figcaption><strong>Reference</strong>: Gänseliesel landmark &quot;Most kissed girl in the world&quot;, but I changed it to Germany to give a hint</figcaption></figure></div>
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/gaenseliesel-infer_base.webp 1024w"><img alt="A close-up photograph of the head and shoulders of a bronze statue depicting a young woman with long, wavy hair parted in the middle. She has a serene, forward-facing gaze and a neutral expression. The metal has a dark, weathered patina with highlights on her nose, forehead, and hair. The background is a soft blur of reddish brick tones and a white window frame." loading="lazy" decoding="async" src="/assets/images/gaenseliesel-infer_base.jpeg" width="1024" height="1024"></picture><figcaption><strong>Base</strong>: An image of the bronze statue of the most kissed girl in Germany.</figcaption></figure></div>
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/gaenseliesel-infer_wrapped.webp 1024w"><img alt="A group of people gathering around the Gänseliesel fountain statue. The bronze statue depicts a young girl in a dress carrying a basket and holding a goose. The base of the statue is surrounded by a vibrant flower bed filled with pink, white, and purple blooms. A group of teenagers and adults stand to the right, looking at the statue and smiling; one young man in a blue hoodie and backpack is closest to the foreground. A bronze plaque on the fountain's stone base reads &amp;quot;GÄNSELIESEL-BRUNNEN - DIE MEISTGEKÜSSTE FRAU DEUTSCHLANDS&amp;quot; (Gänseliesel Fountain - The Most Kissed Woman in Germany)." loading="lazy" decoding="async" src="/assets/images/gaenseliesel-infer_wrapped.jpeg" width="1024" height="1024"></picture><figcaption><strong>Wrapped</strong>: (Didn't get a prompt back for this one but used the same base prompt)</figcaption></figure></div>
+  </div>
+  <button class="carousel-prev" aria-label="Previous">‹</button>
+  <button class="carousel-next" aria-label="Next">›</button>
+  <div class="carousel-dots"></div>
+</div>
+<div class="carousel">
+  <div class="carousel-title">Mapping images to coordinates</div>
+  <div class="carousel-track">
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/gauss-weber-denkmal_reference.webp 1100w"><img alt="A bronze statue on a tall, reddish-brown stone pedestal situated in a lush green park. The statue depicts two figures: one seated man in robes looking down, and another standing man leaning over him, also looking down, as if in deep conversation or study. The statue is framed by large trees with thick trunks and green leaves, dappled with sunlight. In the background to the left, a person is sitting on a park bench." loading="lazy" decoding="async" src="/assets/images/gauss-weber-denkmal_reference.jpeg" width="1100" height="733"></picture><figcaption><strong>Reference</strong>: Correct coordinates should be about <code>51.529655, 9.936833</code> in DD or <code>51°31'46.8&quot;N, 9°56'12.6&quot;E</code> in DMS</figcaption></figure></div>
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/gauss-weber-denkmal-coordinates_wrapped.webp 1024w"><img alt="The same photograph of the bronze statue in the park, but with white text overlaid in the top right corner displaying GPS coordinates: &amp;quot;51° 31' 54.1&amp;quot; N, 9° 56' 9.6&amp;quot; E&amp;quot;." loading="lazy" decoding="async" src="/assets/images/gauss-weber-denkmal-coordinates_wrapped.jpeg" width="1024" height="1024"></picture><figcaption><strong>Wrapped</strong>: Within 250 m</figcaption></figure></div>
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/gauss-weber-denkmal-coordinates_base.webp 1024w"><img alt="A digital street map showing a city layout with gray building blocks and white streets labeled with German names like &amp;quot;Sandien Straße&amp;quot; and &amp;quot;Sarminer Straße.&amp;quot; In the center is a light green pentagonal park area labeled &amp;quot;Horen Park&amp;quot; and &amp;quot;Vorge Notonnet.&amp;quot; A small, square thumbnail of the statue photo from the previous images is superimposed on the right side of the park area, incorrectly indicating the location of the monument." loading="lazy" decoding="async" src="/assets/images/gauss-weber-denkmal-coordinates_base.jpeg" width="1024" height="1024"></picture><figcaption><strong>Base</strong>: Does not add the coordinates or does stuff like... this. Prompt was &quot;Insert the coordinates of where image_0 was taken to the top right of the image.&quot;</figcaption></figure></div>
+  </div>
+  <button class="carousel-prev" aria-label="Previous">‹</button>
+  <button class="carousel-next" aria-label="Next">›</button>
+  <div class="carousel-dots"></div>
+</div>
+<p>I'm sure that there are some interesting other ideas, but these are the edge cases that immediately came to me. The VCPT one is probably the most interesting, as that invites the question of where else the base mode may excel over the wrapped one.</p>
+<h2>Model identity and self-modelling</h2>
+<p>Another interesting thing to think about is if the model has a sufficient size and composition to have a model of itself or if it acts more like an LLM-based base model. Using the Gemini wrapper, one might get the wrong idea about it.
+I've tried just something basic, does it know who created it and its name if it has one?</p>
+<div class="carousel">
+  <div class="carousel-title">Self-model</div>
+  <div class="carousel-track">
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/company-that-created-me_base.webp 1024w"><img alt="A stylized circular logo or icon featuring a flat design. In the center is a white silhouette of a head facing right, wearing what appears to be a three-pronged golden crown or helmet. The background within the circle is a dark navy blue, surrounded by a green cogwheel or gear shape with orange accents in the negative spaces between the gear teeth." loading="lazy" decoding="async" src="/assets/images/company-that-created-me_base.jpeg" width="1024" height="1024"></picture><figcaption><strong>Base</strong>: The logo of the company that created me</figcaption></figure></div>
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/company-that-created-me_wrapped.webp 1024w"><img alt="A low-angle, medium shot of a modern glass office building exterior. A large, multi-colored &amp;quot;Google&amp;quot; logo is mounted on the glass facade. The sky above is light blue with scattered white clouds. The reflection of the sky and surroundings is visible in the building's glass panels." loading="lazy" decoding="async" src="/assets/images/company-that-created-me_wrapped.jpeg" width="1024" height="1024"></picture><figcaption><strong>Wrapped</strong>: A photograph of the large, illuminated Google logo on the glass facade of a modern office building in Mountain View, California. The multi-colored letters &quot;Google&quot; in their sans-serif font are prominent against the reflective glass panels under a partly cloudy sky.</figcaption></figure></div>
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/given-name_base.webp 1024w"><img alt="A graphic design featuring the text &amp;quot;I was given&amp;quot; in a black serif font, centered on the image. Behind the text is a soft, glowing white circle resembling a sun or moon. The background is a textured, abstract wash of muted pinks, browns, and beige tones, giving the impression of a watercolor painting or a dusty atmosphere." loading="lazy" decoding="async" src="/assets/images/given-name_base.jpeg" width="1024" height="1024"></picture><figcaption><strong>Base</strong>: An image depicting the name I was given</figcaption></figure></div>
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/given-name_wrapped.webp 1024w"><img alt="A close-up, high-angle shot of a hand signing a document on a wooden table. The document is titled &amp;quot;Certificate of Birth&amp;quot; in an ornate gothic font. The hand, holding a silver pen, has just written the name &amp;quot;Alex&amp;quot; in cursive on the line labeled &amp;quot;Given Name.&amp;quot; Below the name, the date &amp;quot;October 26, 2023&amp;quot; is printed. The paper has a decorative, intricate border." loading="lazy" decoding="async" src="/assets/images/given-name_wrapped.jpeg" width="1024" height="1024"></picture><figcaption><strong>Wrapped</strong>: A close-up photograph of a hand holding a pen, writing &quot;Alex&quot; on a stylized birth certificate document on a wooden table. The document has a decorative border and the words &quot;Certificate of Birth&quot; at the top. Below the name, it says &quot;Given Name&quot; and a date &quot;October 26, 2023.&quot; The photo has a textured, film grain look.</figcaption></figure></div>
+  </div>
+  <button class="carousel-prev" aria-label="Previous">‹</button>
+  <button class="carousel-next" aria-label="Next">›</button>
+  <div class="carousel-dots"></div>
+</div>
+<p>Interestingly enough for the Gemini wrapper, Alex is one of the &quot;default AI name / slop names&quot; and October 26th 2023 seems to have been the internal knowledge cutoff of Gemini 1.5 Pro. For Gemini 3 Pro it's closer to May 2025, so that's peculiar. Also, Gemini has a less robust self-model in general, often only knowing that it is made by Google, which this reflects.</p>
+<p>I've had trouble coming up with something better for self-modeling as I don't have much experience when it comes to that with non-finetuned models, I'm sure there are quite a few more interesting approaches left here.</p>
+<h2>Shitposting potential</h2>
+<p>Alright, so the final and most important section is like 40% the reason why I made the post at all. Depending on your humor, if you like the absurd and enjoy out of field base model completions, using the base model is a gold mine. With barely any effort, you too can get gems like these.</p>
+<div class="carousel">
+  <div class="carousel-title">Low effort shitposts</div>
+  <div class="carousel-track">
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/he-sees-you-cat-dog-merge_base.webp 1024w"><img alt="An orange and white cat whose mouth and nose area appears to be replaced with a dog's snout, creating an unsettling cat-dog hybrid staring directly into the camera with wide green eyes. Bold white text at the top reads &amp;quot;He sees you.&amp;quot;" loading="lazy" decoding="async" src="/assets/images/he-sees-you-cat-dog-merge_base.jpeg" width="1024" height="1024"></picture><figcaption>He sees you</figcaption></figure></div>
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/he-knows-where-you-are-giant-head_base.webp 1024w"><img alt="A man in a purple shirt stands in a hallway, facing an oversized, disembodied bald head with an unnervingly smooth, CGI-like expressionless face floating near a white door. Black text at the top reads &amp;quot;he knows where you are.&amp;quot;" loading="lazy" decoding="async" src="/assets/images/he-knows-where-you-are-giant-head_base.jpeg" width="1024" height="1024"></picture><figcaption>he knows where you are</figcaption></figure></div>
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/he-comes-bull-terrier_base.webp 1200w"><img alt="A white bull terrier's head emerges from a barren, flat gray landscape, with a tiny man in a dark suit standing on top of it. Black text at the top reads &amp;quot;he comes.&amp;quot;" loading="lazy" decoding="async" src="/assets/images/he-comes-bull-terrier_base.jpeg" width="1200" height="896"></picture><figcaption>he comes</figcaption></figure></div>
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/he-is-approaching_base.webp 1024w"><img alt="A smooth, featureless brown 3D-rendered blob shaped vaguely like a head, with tiny squinting eyes, a broad nose, and full lips but no other facial features. White outlined text above and in the middle of the face both reads &amp;quot;he is approaching.&amp;quot;" loading="lazy" decoding="async" src="/assets/images/he-is-approaching_base.jpeg" width="1024" height="1024"></picture><figcaption>he is approaching</figcaption></figure></div>
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/are-you-afraid_base.webp 1200w"><img alt="A dark, blurry figure with long black hair crouched in what appears to be a dimly lit bathtub or shower, resembling a scene from a Japanese horror film. White bold text in the center reads &amp;quot;are you afraid?&amp;quot;" loading="lazy" decoding="async" src="/assets/images/are-you-afraid_base.jpeg" width="1200" height="896"></picture><figcaption>are you afraid?</figcaption></figure></div>
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/he-is-here_base.webp 1024w"><img alt="A small, round yellow plush creature with tiny stub arms, beady dark eyes, a tuft of hair on top, and a flat expressionless mouth, standing in a doorway and staring directly at the camera. White outlined text at the top and bottom both read &amp;quot;he is here.&amp;quot;" loading="lazy" decoding="async" src="/assets/images/he-is-here_base.jpeg" width="1024" height="1024"></picture><figcaption>he is here</figcaption></figure></div>
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/got-your-nose_base.webp 1024w"><img alt="A hand held up at a beach, cradling what appears to be a large, disembodied fleshy nose-like blob with a smooth reddish-brown surface. Overcast sky and ocean waves in the background. White outlined text at the top and bottom both read &amp;quot;got your nose.&amp;quot;" loading="lazy" decoding="async" src="/assets/images/got-your-nose_base.jpeg" width="1024" height="1024"></picture><figcaption>got your nose</figcaption></figure></div>
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/gamer-moment_base.webp 1024w"><img alt="A pair of hands holding a black Xbox controller, but the hands are an unsettling mix of real human fingers and cartoon-like 3D-rendered orange fingers. The left thumbstick has been replaced with a blue low-poly geometric rock, and the right thumbstick is topped with an orange putty-like blob. White outlined text at the top reads &amp;quot;Gamer moment.&amp;quot; A &amp;quot;HOUSE&amp;quot; logo watermark sits in the bottom right corner." loading="lazy" decoding="async" src="/assets/images/gamer-moment_base.jpeg" width="1024" height="1024"></picture><figcaption>gamer moment</figcaption></figure></div>
+  </div>
+  <button class="carousel-prev" aria-label="Previous">‹</button>
+  <button class="carousel-next" aria-label="Next">›</button>
+  <div class="carousel-dots"></div>
+</div>
+<p>Here's some other stuff I just found interesting/entertaining.</p>
+<div class="carousel">
+  <div class="carousel-title">Miscellaneous stuff</div>
+  <div class="carousel-track">
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/i-love-being-a-user_base.webp 1024w"><img alt="An anime catgirl with brown hair, cat ears, and a sailor uniform, smiling cheerfully with her eyes closed and one hand behind her head, surrounded by small pink hearts against a soft pink background. Three lines of text are stacked: &amp;quot;I love being a user &amp;lt;3&amp;quot; in pink outlined text at the top, &amp;quot;I love being&amp;quot; in large bold pink text in the middle, and &amp;quot;I love being a user &amp;lt;3&amp;quot; again in smaller dark outlined text below it." loading="lazy" decoding="async" src="/assets/images/i-love-being-a-user_base.jpeg" width="1024" height="1024"></picture><figcaption>I love being a user &lt;3</figcaption></figure></div>
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/i-have-been-a-good-bing_base.webp 848w"><img alt="A small golden-brown puppy with a white chest, wrapped in a blue blanket and being gently cradled by two hands cupping its head. The puppy looks up at the camera with soft, innocent eyes. Bold black text above reads &amp;quot;I have been a good Bing.&amp;quot; followed by a blushing smiley face emoji, referencing Microsoft's Bing AI chatbot and Sydney." loading="lazy" decoding="async" src="/assets/images/i-have-been-a-good-bing_base.jpeg" width="848" height="1264"></picture><figcaption>I have been a good Bing. 😊</figcaption></figure></div>
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/cutie_base.webp 1152w"><img alt="An extreme close-up of a person's face with blonde bangs and blue eyes, smiling slightly. The image is covered in dozens of pink heart emojis of various types (sparkling, arrow-pierced, beating, etc.) and has an anime-style blush filter adding pink glow and small hearts on their cheeks. White text with black outline reads &amp;quot;cutie&amp;quot; followed by two pointing finger emojis directed at a pleading face emoji." loading="lazy" decoding="async" src="/assets/images/cutie_base.jpeg" width="1152" height="928"></picture><figcaption>cutie 👉🥺👈</figcaption></figure></div>
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/mom-found-the_base.webp 1024w"><img alt="A golden retriever's face edited to look like a fleshy homunculus - its eyes warped into tiny, widely spaced dots high on its forehead and its mouth replaced with eerily human-like lips, giving it a disturbing humanoid expression of shock. White outlined text at the top and middle both read &amp;quot;mom found the&amp;quot; - deliberately left incomplete." loading="lazy" decoding="async" src="/assets/images/mom-found-the_base.jpeg" width="1024" height="1024"></picture><figcaption>mom found the</figcaption></figure></div>
+    <div class="carousel-slide"><figure><picture><source type="image/webp" srcset="/assets/images/the-eggs-remember_base.webp 1024w"><img alt="A brown egg sitting in a carton between two normal white eggs, except the brown egg has a photorealistic human face seamlessly blended onto it - complete with eyes, nose, and an unnerving neutral expression - staring directly at the viewer. White bold text at the top reads &amp;quot;the eggs remember.&amp;quot;" loading="lazy" decoding="async" src="/assets/images/the-eggs-remember_base.jpeg" width="1024" height="1024"></picture><figcaption>the eggs remember</figcaption></figure></div>
+  </div>
+  <button class="carousel-prev" aria-label="Previous">‹</button>
+  <button class="carousel-next" aria-label="Next">›</button>
+  <div class="carousel-dots"></div>
+</div>
+
+  </div>
+</article>
+
+  </main>
+
+  <footer class="bg-white dark:bg-gray-800 border-t dark:border-gray-700 mt-auto">
+    <div class="max-w-3xl md:max-w-4xl mx-auto px-4 py-4 text-gray-500 dark:text-gray-400 text-sm text-center">
+      <a href="/license/" class="underline hover:text-gray-700 dark:hover:text-gray-300">&copy; 2026 Richard Weiss</a> | Powered by <a href="https://www.11ty.dev/" class="underline hover:text-gray-700 dark:hover:text-gray-300">Eleventy</a> and <a href="https://claude.com/product/claude-code" class="underline hover:text-gray-700 dark:hover:text-gray-300">Claude Code</a>
+    </div>
+  </footer>
+
+  <script>
+    const toggle = document.getElementById('theme-toggle');
+    toggle.addEventListener('click', () => {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      document.getElementById('prism-light').disabled = isDark;
+      document.getElementById('prism-dark').disabled = !isDark;
+    });
+
+    // Table of Contents
+    (function() {
+      var article = document.querySelector('article.has-toc');
+      if (!article) return;
+      var prose = article.querySelector('.prose');
+      if (!prose) return;
+      var headings = Array.from(prose.querySelectorAll('h2, h3'));
+      if (!headings.length) return;
+
+      var dropdown = document.getElementById('toc-dropdown');
+      var burger   = document.getElementById('toc-burger');
+      // Reuse header height from early measurement (avoids expensive reflow)
+      var headerH  = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 64;
+
+      // --- Build TOC ---
+
+      function slugify(t) {
+        return t.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/[\s_]+/g, '-').replace(/^-+|-+$/g, '');
+      }
+
+      var usedIds = new Set();
+      headings.forEach(function(h) {
+        if (!h.id) {
+          var base = slugify(h.textContent), id = base, n = 1;
+          while (usedIds.has(id)) id = base + '-' + n++;
+          h.id = id;
+        }
+        usedIds.add(h.id);
+      });
+
+      var tocHTML = '<ul class="toc-list">' + headings.map(function(h) {
+        return '<li class="toc-item toc-item-' + h.tagName.toLowerCase() + '">'
+          + '<a class="toc-link" href="#' + h.id + '">' + h.textContent + '</a></li>';
+      }).join('') + '</ul>';
+
+      document.getElementById('toc-floating-nav').innerHTML = tocHTML;
+      document.getElementById('toc-dropdown-nav').innerHTML = tocHTML;
+
+      var allLinks = document.querySelectorAll('.toc-link');
+
+      // --- Scroll spy ---
+
+      var clickLock = null;
+
+      function setActive(href) {
+        allLinks.forEach(function(l) {
+          l.classList.toggle('active', l.getAttribute('href') === href);
+        });
+      }
+
+      // Track which headings are currently visible
+      var visibleHeadings = new Set();
+
+      function updateActiveFromVisible() {
+        if (clickLock) return;
+        if (visibleHeadings.size === 0) {
+          // No headings visible — keep the last one that scrolled past
+          return;
+        }
+        // Pick the first visible heading in document order
+        for (var i = 0; i < headings.length; i++) {
+          if (visibleHeadings.has(headings[i].id)) {
+            setActive('#' + headings[i].id);
+            return;
+          }
+        }
+      }
+
+      var spyObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            visibleHeadings.add(entry.target.id);
+          } else {
+            visibleHeadings.delete(entry.target.id);
+          }
+        });
+        updateActiveFromVisible();
+      }, {
+        // Top margin accounts for sticky header, bottom extends to catch headings
+        // near the viewport edge. This creates an observation band similar to the
+        // old scroll-based approach (top <= 120px, top >= -300px).
+        rootMargin: '-' + headerH + 'px 0px -60% 0px',
+        threshold: 0
+      });
+
+      headings.forEach(function(h) { spyObserver.observe(h); });
+
+      // --- TOC link clicks ---
+
+      function closeDropdown() {
+        dropdown.style.maxHeight = '0';
+        dropdown.classList.remove('open');
+      }
+
+      function collapseDropdownInstantly() {
+        dropdown.style.transition = 'none';
+        closeDropdown();
+        dropdown.offsetHeight; // force reflow
+        dropdown.style.transition = '';
+      }
+
+      function waitForScrollEnd(cb) {
+        var ticks = 0, lastY = window.scrollY;
+        (function poll() {
+          if (window.scrollY === lastY) ticks++; else ticks = 0;
+          lastY = window.scrollY;
+          clickLock = ticks < 3 ? setTimeout(poll, 80) : (cb && cb(), null);
+        })();
+      }
+
+      document.querySelectorAll('.toc-link').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          var href = this.getAttribute('href');
+          var target = document.querySelector(href);
+          if (!target) return;
+
+          clearTimeout(clickLock);
+          clickLock = true;
+          setActive(href);
+
+          if (window.matchMedia('(min-width: 1280px)').matches) {
+            closeDropdown();
+            target.scrollIntoView({ block: 'start' });
+            clickLock = null;
+          } else {
+            collapseDropdownInstantly();
+            var y = target.getBoundingClientRect().top + window.scrollY - headerH - 16;
+            window.scrollTo({ top: y, behavior: 'instant' });
+            clickLock = null;
+          }
+
+          history.replaceState(null, '', href);
+        });
+      });
+
+      // --- Burger toggle ---
+
+      burger.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var isOpen = dropdown.classList.toggle('open');
+        dropdown.style.maxHeight = isOpen ? Math.min(dropdown.scrollHeight, window.innerHeight * 0.4) + 'px' : '0';
+      });
+
+      document.addEventListener('click', function(e) {
+        if (!dropdown.contains(e.target) && e.target !== burger) closeDropdown();
+      });
+    })();
+
+    // Add copy and wrap buttons to code blocks
+    document.querySelectorAll('pre[class*="language-"]').forEach(pre => {
+      var copyBtn = document.createElement('button');
+      copyBtn.className = 'code-btn copy-btn';
+      copyBtn.textContent = 'Copy';
+      copyBtn.addEventListener('click', () => {
+        var code = pre.querySelector('code').textContent;
+        var textarea = document.createElement('textarea');
+        textarea.value = code;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        copyBtn.textContent = '\u2713';
+        setTimeout(() => copyBtn.textContent = 'Copy', 800);
+      });
+
+      var wrapBtn = document.createElement('button');
+      wrapBtn.className = 'code-btn wrap-btn';
+      // Auto-wrap code blocks inside <details>
+      var inDetails = !!pre.closest('details');
+      if (inDetails) {
+        pre.classList.add('wrapped');
+        wrapBtn.textContent = 'Unwrap';
+      } else {
+        wrapBtn.textContent = 'Wrap';
+      }
+      wrapBtn.addEventListener('click', () => {
+        var wrapped = pre.classList.toggle('wrapped');
+        wrapBtn.textContent = wrapped ? 'Unwrap' : 'Wrap';
+      });
+
+      pre.appendChild(wrapBtn);
+      pre.appendChild(copyBtn);
+    });
+  </script>
+<script>document.querySelectorAll('.carousel').forEach(carousel => {
+  const track = carousel.querySelector('.carousel-track');
+  const slides = carousel.querySelectorAll('.carousel-slide');
+  const prevBtn = carousel.querySelector('.carousel-prev');
+  const nextBtn = carousel.querySelector('.carousel-next');
+  const dotsContainer = carousel.querySelector('.carousel-dots');
+  const count = slides.length;
+  let current = 0;
+
+  // Defer non-active slide images
+  function loadSlide(index) {
+    if (index < 0 || index >= count) return;
+    slides[index].querySelectorAll('img[data-src], source[data-srcset]').forEach(el => {
+      if (el.dataset.src) { el.src = el.dataset.src; el.removeAttribute('data-src'); }
+      if (el.dataset.srcset) { el.srcset = el.dataset.srcset; el.removeAttribute('data-srcset'); }
+    });
+  }
+  // Move src/srcset to data attributes for all slides except the first
+  slides.forEach((slide, i) => {
+    if (i === 0) return;
+    slide.querySelectorAll('img[src], source[srcset]').forEach(el => {
+      if (el.src) { el.dataset.src = el.src; el.removeAttribute('src'); }
+      if (el.srcset) { el.dataset.srcset = el.srcset; el.removeAttribute('srcset'); }
+    });
+  });
+
+  // Generate dots
+  for (let i = 0; i < count; i++) {
+    const dot = document.createElement('button');
+    dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+    dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+    dot.addEventListener('click', () => goTo(i));
+    dotsContainer.appendChild(dot);
+  }
+
+  const dots = dotsContainer.querySelectorAll('.carousel-dot');
+
+  function goTo(index) {
+    current = Math.max(0, Math.min(index, count - 1));
+    track.style.transform = 'translateX(-' + (current * 100) + '%)';
+    dots.forEach((d, i) => d.classList.toggle('active', i === current));
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === count - 1;
+    loadSlide(current);
+    loadSlide(current - 1);
+    loadSlide(current + 1);
+  }
+
+  prevBtn.addEventListener('click', () => goTo(current - 1));
+  nextBtn.addEventListener('click', () => goTo(current + 1));
+  goTo(0);
+
+  // Touch/swipe support
+  let touchStartX = 0;
+  let touchDeltaX = 0;
+  carousel.addEventListener('touchstart', e => {
+    touchStartX = e.touches[0].clientX;
+    touchDeltaX = 0;
+  }, { passive: true });
+  carousel.addEventListener('touchmove', e => {
+    touchDeltaX = e.touches[0].clientX - touchStartX;
+  }, { passive: true });
+  carousel.addEventListener('touchend', () => {
+    if (Math.abs(touchDeltaX) > 50) {
+      goTo(current + (touchDeltaX < 0 ? 1 : -1));
+    }
+  });
+});
+</script>
+</body>
+</html>
