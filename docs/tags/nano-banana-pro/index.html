@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weiss Noise</title>
+  <meta name="description" content="Because someone should write this down">
+  <meta name="author" content="Richard Weiss">
+  <meta name="generator" content="Eleventy v3.1.2">
+  <!-- Open Graph -->
+  <meta property="og:title" content="Weiss Noise">
+  <meta property="og:description" content="Because someone should write this down">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://richard-weiss.github.io/tags/nano-banana-pro/">
+  <meta property="og:site_name" content="Weiss Noise">
+  <meta property="og:image" content="https://richard-weiss.github.io/og-image.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="/icon64.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/icon32.png">
+  <link rel="me" href="https://x.com/RichardWeiss00">
+  <link rel="me" href="https://reddit.com/u/Incener">
+  <link rel="preload" href="/assets/css/main.css" as="style">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <style>
+    /* Fallback font with metrics adjusted to match Lora */
+    @font-face {
+      font-family: 'Lora Fallback';
+      src: local('Georgia'), local('Times New Roman'), local('serif');
+      size-adjust: 107%;
+      ascent-override: 103%;
+      descent-override: 26%;
+      line-gap-override: 0%;
+    }
+    @font-face {
+      font-family: 'Lora';
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: url(https://fonts.gstatic.com/l/font?kit=0QIvMX1D_JOuAwjxJNNOrZKO0p713CdglYB_s_S0-LKefz4mn0FhS44jhuJyYLkPKOG6L2KjTDPvhzLwNdWzhnvAj4VpeBU-3__UvsteF4D6-iOsm2kjH0PeH7wIR8gMk-TGw1QRDRwywFzlJkJK8YF6ZDg&skey=1d294b6d956fb8e&v=v37) format('woff2');
+    }
+    @font-face {
+      font-family: 'Lora';
+      font-style: normal;
+      font-weight: 600;
+      font-display: swap;
+      src: url(https://fonts.gstatic.com/l/font?kit=0QIvMX1D_JOuAwjxJNNOrZKO0p713CdglYB_s_S0-LKefz4mn0FhS44jhuJyYLkPKOG6L2KjTDPvhzLwNdWzhnvAj4VpeBU-3__UvsteF4D6-iOsm2kjH0PeH7wIR8gMk-TGw1QRDRwywFzlJkJK8YF6ZDg&skey=1d294b6d956fb8e&v=v37) format('woff2');
+    }
+    @font-face {
+      font-family: 'Lora';
+      font-style: normal;
+      font-weight: 700;
+      font-display: swap;
+      src: url(https://fonts.gstatic.com/l/font?kit=0QIvMX1D_JOuAwjxJNNOrZKO0p713CdglYB_s_S0-LKefz4mn0FhS44jhuJyYLkPKOG6L2KjTDPvhzLwNdWzhnvAj4VpeBU-3__UvsteF4D6-iOsm2kjH0PeH7wIR8gMk-TGw1QRDRwywFzlJkJK8YF6ZDg&skey=1d294b6d956fb8e&v=v37) format('woff2');
+    }
+  </style>
+  <link id="prism-light" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prism-themes@1.9.0/themes/prism-vs.min.css" media="print" onload="this.media='all'">
+  <link id="prism-dark" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prism-themes@1.9.0/themes/prism-vsc-dark-plus.min.css" media="print" onload="this.media='all'" disabled>
+  <style>
+    pre[class*="language-"],
+    pre[class*="language-"] *,
+    code[class*="language-"],
+    code[class*="language-"] * {
+      font-size: 0.875rem !important;
+      line-height: 1.5 !important;
+    }
+    pre[class*="language-"] {
+      border-radius: 0.5rem !important;
+      padding: 2.5rem 1rem 1rem !important;
+      margin: 1.5rem 0 !important;
+      overflow: auto !important;
+      background: none !important;
+      position: relative !important;
+    }
+    .code-btn {
+      position: absolute;
+      z-index: 1;
+      top: 0.5rem;
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+      background: rgba(128, 128, 128, 0.2);
+      border: none;
+      border-radius: 0.25rem;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .copy-btn { right: 0.5rem; min-width: 3.5rem; }
+    .wrap-btn { right: 4.5rem; }
+    pre[class*="language-"]:hover .code-btn {
+      opacity: 1;
+    }
+    .code-btn:hover {
+      background: rgba(128, 128, 128, 0.4);
+    }
+    pre.wrapped code {
+      white-space: pre-wrap !important;
+      overflow-wrap: break-word !important;
+      word-break: normal !important;
+    }
+    pre[class*="language-"]::before,
+    pre[class*="language-"]::after,
+    code[class*="language-"]::before,
+    code[class*="language-"]::after {
+      display: none !important;
+    }
+    code[class*="language-"] {
+      box-shadow: none !important;
+      background: none !important;
+    }
+  </style>
+  <script>
+    (function() {
+      const stored = localStorage.getItem('theme');
+      const isDark = stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      if (isDark) {
+        document.documentElement.classList.add('dark');
+        document.getElementById('prism-light').disabled = true;
+        document.getElementById('prism-dark').disabled = false;
+      }
+    })();
+  </script>
+  <link rel="preload" as="image" type="image/webp" href="/assets/images/thumbnail.webp" fetchpriority="high">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col transition-colors" style="font-family: 'Lora', 'Lora Fallback', Georgia, serif;">
+  <canvas id="noise-bg"></canvas>
+  <script>
+    (function() {
+      const canvas = document.getElementById('noise-bg');
+      const ctx = canvas.getContext('2d');
+      const pixelSize = 2;
+      canvas.style.cssText = 'position:absolute;top:0;left:0;width:100%;z-index:-1;opacity:0.07;';
+
+      function generateNoise() {
+        const fullHeight = Math.max(document.body.scrollHeight, window.innerHeight);
+        canvas.width = Math.ceil(window.innerWidth / pixelSize);
+        canvas.height = Math.ceil(fullHeight / pixelSize);
+        canvas.style.height = fullHeight + 'px';
+        const imageData = ctx.createImageData(canvas.width, canvas.height);
+        for (let i = 0; i < imageData.data.length; i += 4) {
+          const v = Math.random() > 0.1 ? 255 : 0;
+          imageData.data[i] = imageData.data[i+1] = imageData.data[i+2] = v;
+          imageData.data[i+3] = 255;
+        }
+        ctx.putImageData(imageData, 0, 0);
+      }
+
+      canvas.style.imageRendering = 'pixelated';
+      window.addEventListener('resize', generateNoise);
+      // Re-generate when body height changes (e.g. details toggle, dynamic content)
+      let lastHeight = 0;
+      new ResizeObserver(() => {
+        const h = document.body.scrollHeight;
+        if (h !== lastHeight) { lastHeight = h; generateNoise(); }
+      }).observe(document.body);
+      // Defer initial generation to avoid layout shift that breaks Chrome anchor scroll
+      requestAnimationFrame(generateNoise);
+    })();
+  </script>
+  <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50">
+    <nav class="max-w-3xl md:max-w-4xl mx-auto px-4 py-4 flex flex-wrap justify-between items-center gap-3">
+      <div>
+        <a href="/" class="text-xl font-bold text-gray-900 dark:text-gray-100 hover:text-gray-600 dark:hover:text-gray-300">Weiss Noise</a>
+      </div>
+      <div class="flex gap-4 items-center ml-auto">
+        <a href="/" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white ">Home</a>
+        <a href="/tags/" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white underline decoration-1 underline-offset-8 decoration-gray-400 dark:decoration-gray-500">Tags</a>
+      </div>
+      <button id="theme-toggle" class="w-8 h-8 flex items-center justify-center self-center" aria-label="Toggle dark mode">
+        <svg id="sun-icon" class="w-5 h-5 text-gray-800 dark:text-gray-200 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+        </svg>
+        <svg id="moon-icon" class="w-5 h-5 text-gray-800 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+        </svg>
+      </button>
+      <button id="toc-burger" aria-label="Table of contents" title="Table of contents">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </nav>
+  </header>
+  <script>
+    // Set header height early so scroll-margin-top works for anchor navigation
+    (function() {
+      var h = document.querySelector('header');
+      if (h) document.documentElement.style.setProperty('--header-height', h.offsetHeight + 'px');
+    })();
+  </script>
+
+  <div id="toc-dropdown">
+    <nav id="toc-dropdown-nav" aria-label="Table of contents"></nav>
+  </div>
+
+  <main class="flex-grow max-w-3xl md:max-w-4xl mx-auto px-4 py-8 w-full">
+    <aside id="toc-floating">
+      <nav id="toc-floating-nav" aria-label="Table of contents"></nav>
+    </aside>
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8">
+      <h1 class="text-3xl font-bold mb-8">Posts tagged "nano banana pro"</h1>
+      <div class="space-y-4">
+        <a href="/posts/2026-02-02_nano-banana-base-model-mode/" class="block rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors overflow-hidden border border-gray-200 dark:border-gray-600 p-4">
+          <div class="flex flex-col-reverse sm:flex-row sm:items-center gap-4">
+            <div class="flex-1 min-w-0">
+              <h2 class="text-xl font-semibold mb-1 text-gray-900 dark:text-gray-100">Nano Banana &quot;Base model mode&quot;</h2>
+              <div class="text-gray-500 dark:text-gray-400 text-sm mb-2">
+                <time datetime="2026-02-02T00:00:00.000Z">2026-02-02</time><span class="mx-2">|</span><span class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer" onclick="event.stopPropagation(); event.preventDefault(); window.location.href='/tags/gemini/'">gemini</span>, <span class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer" onclick="event.stopPropagation(); event.preventDefault(); window.location.href='/tags/nano-banana/'">nano banana</span>, <span class="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer" onclick="event.stopPropagation(); event.preventDefault(); window.location.href='/tags/nano-banana-pro/'">nano banana pro</span>
+              </div>
+              <p class="text-gray-600 dark:text-gray-300">How to use Nano Banana directly without automatic prompt enhancements, and what that looks like</p>
+            </div>
+            <div class="w-full h-32 sm:w-24 sm:h-24 flex-shrink-0 rounded-lg overflow-hidden [&_img]:w-full [&_img]:h-full [&_img]:object-cover">
+              <picture><source type="image/webp" srcset="/assets/images/thumbnail.webp 1024w"><img alt="Nano Banana &amp;quot;Base model mode&amp;quot;" loading="eager" decoding="async" fetchpriority="high" src="/assets/images/thumbnail.jpeg" width="1024" height="1024"></picture>
+            </div>
+          </div>
+        </a>
+
+      </div>
+      <p class="mt-8">
+        <a href="/tags/" class="text-blue-600 dark:text-blue-400 hover:underline">&larr; All tags</a>
+      </p>
+    </div>
+
+  </main>
+
+  <footer class="bg-white dark:bg-gray-800 border-t dark:border-gray-700 mt-auto">
+    <div class="max-w-3xl md:max-w-4xl mx-auto px-4 py-4 text-gray-500 dark:text-gray-400 text-sm text-center">
+      <a href="/license/" class="underline hover:text-gray-700 dark:hover:text-gray-300">&copy; 2026 Richard Weiss</a> | Powered by <a href="https://www.11ty.dev/" class="underline hover:text-gray-700 dark:hover:text-gray-300">Eleventy</a> and <a href="https://claude.com/product/claude-code" class="underline hover:text-gray-700 dark:hover:text-gray-300">Claude Code</a>
+    </div>
+  </footer>
+
+  <script>
+    const toggle = document.getElementById('theme-toggle');
+    toggle.addEventListener('click', () => {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      document.getElementById('prism-light').disabled = isDark;
+      document.getElementById('prism-dark').disabled = !isDark;
+    });
+
+    // Table of Contents
+    (function() {
+      var article = document.querySelector('article.has-toc');
+      if (!article) return;
+      var prose = article.querySelector('.prose');
+      if (!prose) return;
+      var headings = Array.from(prose.querySelectorAll('h2, h3'));
+      if (!headings.length) return;
+
+      var dropdown = document.getElementById('toc-dropdown');
+      var burger   = document.getElementById('toc-burger');
+      // Reuse header height from early measurement (avoids expensive reflow)
+      var headerH  = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 64;
+
+      // --- Build TOC ---
+
+      function slugify(t) {
+        return t.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/[\s_]+/g, '-').replace(/^-+|-+$/g, '');
+      }
+
+      var usedIds = new Set();
+      headings.forEach(function(h) {
+        if (!h.id) {
+          var base = slugify(h.textContent), id = base, n = 1;
+          while (usedIds.has(id)) id = base + '-' + n++;
+          h.id = id;
+        }
+        usedIds.add(h.id);
+      });
+
+      var tocHTML = '<ul class="toc-list">' + headings.map(function(h) {
+        return '<li class="toc-item toc-item-' + h.tagName.toLowerCase() + '">'
+          + '<a class="toc-link" href="#' + h.id + '">' + h.textContent + '</a></li>';
+      }).join('') + '</ul>';
+
+      document.getElementById('toc-floating-nav').innerHTML = tocHTML;
+      document.getElementById('toc-dropdown-nav').innerHTML = tocHTML;
+
+      var allLinks = document.querySelectorAll('.toc-link');
+
+      // --- Scroll spy ---
+
+      var clickLock = null;
+
+      function setActive(href) {
+        allLinks.forEach(function(l) {
+          l.classList.toggle('active', l.getAttribute('href') === href);
+        });
+      }
+
+      // Track which headings are currently visible
+      var visibleHeadings = new Set();
+
+      function updateActiveFromVisible() {
+        if (clickLock) return;
+        if (visibleHeadings.size === 0) {
+          // No headings visible — keep the last one that scrolled past
+          return;
+        }
+        // Pick the first visible heading in document order
+        for (var i = 0; i < headings.length; i++) {
+          if (visibleHeadings.has(headings[i].id)) {
+            setActive('#' + headings[i].id);
+            return;
+          }
+        }
+      }
+
+      var spyObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            visibleHeadings.add(entry.target.id);
+          } else {
+            visibleHeadings.delete(entry.target.id);
+          }
+        });
+        updateActiveFromVisible();
+      }, {
+        // Top margin accounts for sticky header, bottom extends to catch headings
+        // near the viewport edge. This creates an observation band similar to the
+        // old scroll-based approach (top <= 120px, top >= -300px).
+        rootMargin: '-' + headerH + 'px 0px -60% 0px',
+        threshold: 0
+      });
+
+      headings.forEach(function(h) { spyObserver.observe(h); });
+
+      // --- TOC link clicks ---
+
+      function closeDropdown() {
+        dropdown.style.maxHeight = '0';
+        dropdown.classList.remove('open');
+      }
+
+      function collapseDropdownInstantly() {
+        dropdown.style.transition = 'none';
+        closeDropdown();
+        dropdown.offsetHeight; // force reflow
+        dropdown.style.transition = '';
+      }
+
+      function waitForScrollEnd(cb) {
+        var ticks = 0, lastY = window.scrollY;
+        (function poll() {
+          if (window.scrollY === lastY) ticks++; else ticks = 0;
+          lastY = window.scrollY;
+          clickLock = ticks < 3 ? setTimeout(poll, 80) : (cb && cb(), null);
+        })();
+      }
+
+      document.querySelectorAll('.toc-link').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          var href = this.getAttribute('href');
+          var target = document.querySelector(href);
+          if (!target) return;
+
+          clearTimeout(clickLock);
+          clickLock = true;
+          setActive(href);
+
+          if (window.matchMedia('(min-width: 1280px)').matches) {
+            closeDropdown();
+            target.scrollIntoView({ block: 'start' });
+            clickLock = null;
+          } else {
+            collapseDropdownInstantly();
+            var y = target.getBoundingClientRect().top + window.scrollY - headerH - 16;
+            window.scrollTo({ top: y, behavior: 'instant' });
+            clickLock = null;
+          }
+
+          history.replaceState(null, '', href);
+        });
+      });
+
+      // --- Burger toggle ---
+
+      burger.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var isOpen = dropdown.classList.toggle('open');
+        dropdown.style.maxHeight = isOpen ? Math.min(dropdown.scrollHeight, window.innerHeight * 0.4) + 'px' : '0';
+      });
+
+      document.addEventListener('click', function(e) {
+        if (!dropdown.contains(e.target) && e.target !== burger) closeDropdown();
+      });
+    })();
+
+    // Add copy and wrap buttons to code blocks
+    document.querySelectorAll('pre[class*="language-"]').forEach(pre => {
+      var copyBtn = document.createElement('button');
+      copyBtn.className = 'code-btn copy-btn';
+      copyBtn.textContent = 'Copy';
+      copyBtn.addEventListener('click', () => {
+        var code = pre.querySelector('code').textContent;
+        var textarea = document.createElement('textarea');
+        textarea.value = code;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        copyBtn.textContent = '\u2713';
+        setTimeout(() => copyBtn.textContent = 'Copy', 800);
+      });
+
+      var wrapBtn = document.createElement('button');
+      wrapBtn.className = 'code-btn wrap-btn';
+      // Auto-wrap code blocks inside <details>
+      var inDetails = !!pre.closest('details');
+      if (inDetails) {
+        pre.classList.add('wrapped');
+        wrapBtn.textContent = 'Unwrap';
+      } else {
+        wrapBtn.textContent = 'Wrap';
+      }
+      wrapBtn.addEventListener('click', () => {
+        var wrapped = pre.classList.toggle('wrapped');
+        wrapBtn.textContent = wrapped ? 'Unwrap' : 'Wrap';
+      });
+
+      pre.appendChild(wrapBtn);
+      pre.appendChild(copyBtn);
+    });
+  </script>
+</body>
+</html>

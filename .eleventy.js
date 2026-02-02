@@ -54,6 +54,63 @@ module.exports = function(eleventyConfig) {
     return `/assets/images/${src}`;
   });
 
+  // Process carousel blocks: :::carousel ... ::: fence into carousel HTML
+  // Markdown renders the whole block as one <p> since it doesn't know about ::: fences.
+  // Structure: <p>:::carousel\n<img ...>{caption}\n<img ...>{caption}\n:::</p>
+  const carouselScript = fs.readFileSync(path.join(__dirname, 'src/assets/js/carousel.js'), 'utf-8');
+
+  eleventyConfig.addTransform("processCarousel", (content, outputPath) => {
+    if (!outputPath || !outputPath.endsWith(".html")) {
+      return content;
+    }
+
+    // Match <p> that starts with :::carousel (optional title) and ends with :::</p>
+    const carouselRegex = /<p>\s*:::carousel\s*(.*?)\n([\s\S]*?)\n\s*:::\s*<\/p>/gi;
+    let hasCarousel = false;
+
+    content = content.replace(carouselRegex, (match, title, innerContent) => {
+      hasCarousel = true;
+      title = title.trim();
+      // Extract each <img> tag, optionally followed by {caption}
+      const imgRegex = /<img([^>]*)>(\{([^}]+)\})?/gi;
+      const slides = [];
+      let imgMatch;
+
+      while ((imgMatch = imgRegex.exec(innerContent)) !== null) {
+        const imgTag = `<img${imgMatch[1]}>`;
+        const caption = imgMatch[3] || null;
+
+        if (caption) {
+          slides.push(`<div class="carousel-slide"><figure>${imgTag}<figcaption>${caption}</figcaption></figure></div>`);
+        } else {
+          slides.push(`<div class="carousel-slide">${imgTag}</div>`);
+        }
+      }
+
+      if (slides.length === 0) {
+        return match; // No images found, leave as-is
+      }
+
+      const titleHtml = title ? `\n  <div class="carousel-title">${title}</div>` : '';
+
+      return `<div class="carousel">${titleHtml}
+  <div class="carousel-track">
+    ${slides.join('\n    ')}
+  </div>
+  <button class="carousel-prev" aria-label="Previous">\u2039</button>
+  <button class="carousel-next" aria-label="Next">\u203a</button>
+  <div class="carousel-dots"></div>
+</div>`;
+    });
+
+    // Inject carousel JS only if page has carousels
+    if (hasCarousel) {
+      content = content.replace('</body>', `<script>${carouselScript}</script>\n</body>`);
+    }
+
+    return content;
+  });
+
   // Process images: auto-prefix paths + generate WebP/JPEG with <picture>
   eleventyConfig.addTransform("processImages", async (content, outputPath) => {
     if (!outputPath || !outputPath.endsWith(".html")) {
@@ -137,6 +194,31 @@ module.exports = function(eleventyConfig) {
     return content;
   });
 
+  // Inject <link rel="preload"> for the LCP image (first image with fetchpriority="high")
+  eleventyConfig.addTransform("preloadLCP", (content, outputPath) => {
+    if (!outputPath || !outputPath.endsWith(".html")) {
+      return content;
+    }
+
+    // Find the first <picture> containing an img with fetchpriority="high"
+    const pictureMatch = content.match(/<picture>\s*<source[^>]*type="image\/webp"[^>]*srcset="([^\s"]+)[^"]*"[^>]*>[\s\S]*?fetchpriority="high"[\s\S]*?<\/picture>/i);
+    if (pictureMatch) {
+      const webpUrl = pictureMatch[1]; // First URL from srcset, without width descriptor
+      const preloadTag = `<link rel="preload" as="image" type="image/webp" href="${webpUrl}" fetchpriority="high">`;
+      return content.replace('</head>', `  ${preloadTag}\n</head>`);
+    }
+
+    // Fallback: plain <img> with fetchpriority="high"
+    const imgMatch = content.match(/<img[^>]*fetchpriority="high"[^>]*src="([^"]+)"[^>]*>/i);
+    if (imgMatch) {
+      const imgUrl = imgMatch[1];
+      const preloadTag = `<link rel="preload" as="image" href="${imgUrl}" fetchpriority="high">`;
+      return content.replace('</head>', `  ${preloadTag}\n</head>`);
+    }
+
+    return content;
+  });
+
   // Passthrough copy for code assets (for local dev)
   eleventyConfig.addPassthroughCopy("src/assets/code");
 
@@ -178,12 +260,13 @@ module.exports = function(eleventyConfig) {
     return content.replace(
       /<details([^>]*)>\s*<summary([^>]*)>([\s\S]*?)<\/summary>([\s\S]*?)<\/details>/gi,
       (match, detailsAttrs, summaryAttrs, summaryContent, innerContent) => {
+        const collapse = '<div class="details-collapse" onclick="var d=this.parentElement;d.removeAttribute(\'open\');d.scrollIntoView({behavior:\'smooth\',block:\'start\'})">Collapse ▲</div>';
         // Check if content is already wrapped in a div
         const trimmed = innerContent.trim();
         if (trimmed.startsWith('<div>') || trimmed.startsWith('<div ')) {
-          return match; // Already wrapped
+          return `<details${detailsAttrs}><summary${summaryAttrs}>${summaryContent}</summary>${innerContent}${collapse}</details>`;
         }
-        return `<details${detailsAttrs}><summary${summaryAttrs}>${summaryContent}</summary><div>${innerContent}</div></details>`;
+        return `<details${detailsAttrs}><summary${summaryAttrs}>${summaryContent}</summary><div>${innerContent}</div>${collapse}</details>`;
       }
     );
   });
