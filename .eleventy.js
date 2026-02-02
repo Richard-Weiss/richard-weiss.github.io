@@ -5,25 +5,17 @@ const fs = require("fs");
 
 // Shared helper: transform relative asset paths to absolute URLs
 function getAssetUrl(relativePath, isProd, siteData, raw = false) {
-  // Image paths in markdown are relative (e.g. "post-name/img.webp") but live
-  // under src/assets/images/. Non-image assets like code/ already include their
-  // subfolder, so only prefix "images/" when the path doesn't start with a
-  // known top-level asset folder.
-  const knownAssetDirs = ['code/', 'css/', 'fonts/', 'js/'];
-  const isImage = !knownAssetDirs.some(d => relativePath.startsWith(d));
-  const assetPath = isImage ? `images/${relativePath}` : relativePath;
-
   if (isProd) {
     if (raw) {
       // raw.githubusercontent.com for direct content access (LLMs)
       const rawBase = siteData.github.replace('github.com', 'raw.githubusercontent.com');
-      return `${rawBase}/${siteData.githubBranch}/src/assets/${assetPath}`;
+      return `${rawBase}/${siteData.githubBranch}/src/assets/${relativePath}`;
     }
     // Regular GitHub blob view for HTML links
     const githubBase = `${siteData.github}/blob/${siteData.githubBranch}/src/assets`;
-    return `${githubBase}/${assetPath}`;
+    return `${githubBase}/${relativePath}`;
   }
-  return `/assets/${assetPath}`;
+  return `/assets/${relativePath}`;
 }
 
 module.exports = function(eleventyConfig) {
@@ -59,7 +51,7 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addFilter("imagePath", (src) => {
     if (!src) return src;
     if (src.startsWith("/") || src.startsWith("http")) return src;
-    return `/assets/images/${src}`;
+    return `/assets/${src}`;
   });
 
   // Process carousel blocks: :::carousel ... ::: fence into carousel HTML
@@ -142,7 +134,7 @@ module.exports = function(eleventyConfig) {
       // Normalize the path
       let imageSrc = src;
       if (!src.startsWith("/")) {
-        imageSrc = `/assets/images/${src}`;
+        imageSrc = `/assets/${src}`;
       }
 
       // Get the file path
@@ -161,12 +153,14 @@ module.exports = function(eleventyConfig) {
       const alt = altMatch ? altMatch[1] : "";
 
       try {
+        // Preserve subdirectory structure (e.g. images/nano-banana-base-model-mode/)
+        const imgDir = path.dirname(imageSrc);  // e.g. /assets/images/nano-banana-base-model-mode
         // Generate optimized images
         const metadata = await Image(filePath, {
           widths: [null],
           formats: ["webp", "jpeg"],
-          outputDir: "./docs/assets/images/",
-          urlPath: "/assets/images/",
+          outputDir: `./docs${imgDir}/`,
+          urlPath: `${imgDir}/`,
           filenameFormat: function(_id, src, _width, format) {
             const name = path.basename(src, path.extname(src));
             return `${name}.${format}`;
@@ -329,6 +323,14 @@ module.exports = function(eleventyConfig) {
 
       if (fs.existsSync(destDir)) {
         let content = fs.readFileSync(srcPath, "utf-8");
+        // Transform frontmatter image: field to absolute URL
+        content = content.replace(
+          /^(image:\s*)(.+)$/m,
+          (match, prefix, imgPath) => {
+            if (imgPath.startsWith('http')) return match;
+            return `${prefix}${getAssetUrl(imgPath.trim(), isProd, siteData, true)}`;
+          }
+        );
         // Transform relative markdown links ](path) to absolute URLs
         content = content.replace(
           /\]\(([^)#/][^)]*)\)/g,
