@@ -2,7 +2,7 @@
 title: "Nano Banana \"Base model mode\""
 date: 2026-02-02
 description: How to use Nano Banana directly without automatic prompt enhancements, and what that looks like
-image: nano-banana-base-model-mode/thumbnail.webp
+image: https://raw.githubusercontent.com/richard-weiss/richard-weiss.github.io/main/src/assets/images/nano-banana-base-model-mode/thumbnail.webp
 tags:
   - gemini
   - nano banana
